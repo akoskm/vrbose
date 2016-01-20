@@ -6,7 +6,7 @@ config.mongodb = {
   // use vrbose
   // db.createUser({"user": "vrbose", "pwd": "vrbose", "roles": [{role: "readWrite", db: "vrbose"}]});
   // db.createCollection("messages");
-  uri: 'mongodb://vrbose:vrbose@localhost/vrbose'
+  uri: process.env.MONGO_URI || 'mongodb://vrbose:vrbose@localhost/vrbose'
 };
 
 export default config;
