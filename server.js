@@ -74,7 +74,7 @@ app.get('/read', function (req, res) {
   let skip = req.query.skip || 0;
   let limit = req.query.limit || 100;
 
-  app.db.models.Message.find().skip(skip).limit(limit).exec(function(err, messages) {
+  app.db.models.Message.find().skip(skip).limit(limit).sort('-createdBy').exec(function(err, messages) {
     if (err) {
       logger.error(err);
     }
