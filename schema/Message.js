@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 export default(autoIndex) => {
 
   let MessageSchema = new mongoose.Schema({
-    data: {},
-    attributes: [],
+    message: {},
     createdOn: { type: Date, default: Date.now },
     createdBy: { type: String, default: '' }
   });

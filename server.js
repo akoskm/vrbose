@@ -31,33 +31,43 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.db = mongoose.createConnection(config.mongodb.uri, mongoConfig);
 app.db.model('Message', MessageSchema(autoIndex));
 
+let sendErr = function(res, msg) {
+  res.status(200).json({
+    success: false, message: msg
+  });
+};
+
 app.post('/write', function (req, res) {
   let body = req.body;
   let message;
 
   if (body === null || typeof body !== 'object') {
-    res.status(200).json({
-      success: false, message: 'request body is missing'
-    });
+    sendErr(res, 'request body is missing');
   } else {
-    message = {
-      data: req.body.data,
-      attributes: req.body.attributes,
-      createdBy: req.body.createdBy
-    };
+    if (body.message === null || body.message === undefined) {
+      sendErr(res, 'message is missing from request body');
+    } else if (body.createdBy === null || body.createdBy === undefined) {
+      sendErr(res, 'createdBy is missing from request body');
+    } else {
+      message = {
+        message: req.body.message,
+        createdBy: req.body.createdBy,
+        createdOn: req.body.createdOn
+      };
 
-    app.db.models.Message.create(message, function(err, room) {
-      if (err) {
-        logger.error(err);
-      }
+      app.db.models.Message.create(message, function(err, room) {
+        if (err) {
+          logger.error(err);
+        }
 
-      logger.debug('message saved');
+        logger.debug('message saved');
 
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        success: true, message: 'saved'
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({
+          success: true, message: 'saved'
+        });
       });
-    });
+    }
   }
 });
 
