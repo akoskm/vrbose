@@ -51,8 +51,7 @@ app.post('/write', function (req, res) {
     } else {
       message = {
         message: req.body.message,
-        createdBy: req.body.createdBy,
-        createdOn: req.body.createdOn
+        createdBy: req.body.createdBy
       };
 
       app.db.models.Message.create(message, function(err, room) {
