@@ -37,6 +37,10 @@ let sendErr = function(res, msg) {
   });
 };
 
+app.get('/', function (req, res) {
+  res.send('vrbose is running');
+});
+
 app.post('/write', function (req, res) {
   let body = req.body;
   let message;
@@ -50,8 +54,10 @@ app.post('/write', function (req, res) {
       sendErr(res, 'createdBy is missing from request body');
     } else {
       message = {
-        message: req.body.message,
-        createdBy: req.body.createdBy
+        data: req.body.data,
+        createdBy: req.body.createdBy,
+        level: req.body.level,
+        topic: req.body.topic
       };
 
       app.db.models.Message.create(message, function(err, doc) {

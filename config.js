@@ -1,6 +1,6 @@
 let config = {};
 
-config.port = process.env.PORT || 3030;
+config.port = process.env.PORT || 3006;
 config.mongodb = {
   // vrbose db, user and a messages collection has to be created
   // use vrbose
