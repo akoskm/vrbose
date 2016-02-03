@@ -7,7 +7,7 @@ import log4js from 'log4js';
 import bodyParser from 'body-parser';
 
 // logger configuration
-log4js.configure('config/log4js.json');
+log4js.configure('./config/log4js.json');
 let logger = log4js.getLogger();
 
 const app = express();
