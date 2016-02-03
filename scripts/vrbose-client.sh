@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage () {
-  echo "Usage: vrbose-client <url> <topic> <level> <message> <author>"
+  echo "Usage: vrbose-client <url> <topic> <level> <log> <author>"
 }
 
 if [ $# -eq 0 ]
@@ -13,7 +13,7 @@ elif [ $# -lt 5 ]
     echo "Not enough arguments"
     usage
 else
-  message="{\"message\":{\"topic\":\""$2\"",\"type\":\""$3\"",\"data\":\""$4\""},\"createdBy\":\""$5\""}"
-  echo "Writing $message to $1"
-  curl -H "Content-Type: application/json" -X POST -d "$message" $1
+  log="{\"log\":{\"topic\":\""$2\"",\"level\":\""$3\"",\"data\":\""$4\"",\"createdBy\":\""$5\""}}"
+  echo "Writing $log to $1"
+  curl -H "Content-Type: application/json" -X POST -d "$log" $1
 fi

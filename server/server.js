@@ -45,20 +45,23 @@ app.post('/write', function (req, res) {
   let body = req.body;
   let message;
 
-  if (body === null || typeof body !== 'object') {
+  if (body === null || typeof body !== 'object' || typeof body.log !== 'object') {
     sendErr(res, 'request body is missing');
   } else {
-    if (body.message === null || body.message === undefined) {
+    let log = body.log;
+    if (log.data === null || log.data === undefined) {
       sendErr(res, 'message is missing from request body');
-    } else if (body.createdBy === null || body.createdBy === undefined) {
+    } else if (log.createdBy === null || log.createdBy === undefined) {
       sendErr(res, 'createdBy is missing from request body');
     } else {
       message = {
-        data: req.body.data,
-        createdBy: req.body.createdBy,
-        level: req.body.level,
-        topic: req.body.topic
+        data: log.data,
+        createdBy: log.createdBy,
+        level: log.level,
+        topic: log.topic
       };
+
+      console.log(message);
 
       app.db.models.Message.create(message, function(err, doc) {
         if (err) {
