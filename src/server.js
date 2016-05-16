@@ -29,9 +29,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //setup mongoose
-app.db = mongoose.createConnection(config.mongodb.uri, mongoConfig);
-app.db.model('Message', MessageSchema(autoIndex));
-
+mongoose.connect(config.mongodb.uri, mongoConfig);
+MessageSchema(autoIndex);
 
 app.get('/', function (req, res) {
   res.send('vrbose is running');

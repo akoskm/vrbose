@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export default(app, logger) => {
 
   let sendErr = function(res, msg) {
@@ -22,14 +24,14 @@ export default(app, logger) => {
         } else {
           message = {
             data: log.data,
-            createdBy: log.createdBy,
+            author: log.createdBy,
             level: log.level,
             topic: log.topic
           };
 
           console.log(message);
 
-          app.db.models.Message.create(message, function(err, doc) {
+          mongoose.model('Message').create(message, function(err, doc) {
             if (err) {
               logger.error(err);
             }
@@ -48,7 +50,7 @@ export default(app, logger) => {
       let skip = req.query.skip || 0;
       let limit = req.query.limit || 100;
 
-      app.db.models.Message.find().skip(skip).limit(limit).sort('-createdBy').exec(function(err, messages) {
+      mongoose.model('Message').find().skip(skip).limit(limit).sort('-createdBy').exec(function(err, messages) {
         if (err) {
           logger.error(err);
         }

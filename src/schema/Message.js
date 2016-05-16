@@ -2,15 +2,15 @@ import mongoose from 'mongoose';
 
 export default(autoIndex) => {
 
-  let MessageSchema = new mongoose.Schema({
+  let messageSchema = new mongoose.Schema({
     data: {},
     level: { type: String, default: 'INFO' },
-    topic: { type: String, default: '' },
-    createdOn: { type: Date, default: Date.now },
-    createdBy: { type: String, default: '' }
+    topic: { type: String, default: 'default' },
+    timestamp: { type: Date, default: Date.now },
+    author: { type: String, default: '' }
   });
 
-  MessageSchema.set('autoIndex', autoIndex);
+  messageSchema.set('autoIndex', autoIndex);
 
-  return MessageSchema;
+  mongoose.model('Message', messageSchema);
 };

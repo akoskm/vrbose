@@ -10,7 +10,7 @@
             "args": ["--debug"],
             "port": 5858,
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": null,
+            "preLaunchTask": "build",
             "runtimeExecutable": null,
             "runtimeArgs": [
                 "--nolazy"
