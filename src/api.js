@@ -29,7 +29,7 @@ export default(app, logger) => {
             topic: log.topic
           };
 
-          console.log(message);
+          logger.info(message);
 
           mongoose.model('Message').create(message, function(err, doc) {
             if (err) {
