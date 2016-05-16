@@ -4,5 +4,10 @@
       "node_modules": true,
       "build": true,
       "logs": true
+    },
+
+    "search.exclude": {
+      "node_modules": true,
+      "build": true
     }
 }

@@ -13,21 +13,27 @@ export default(app, logger) => {
       let body = req.body;
       let message;
 
-      if (body === null || typeof body !== 'object' || typeof body.log !== 'object') {
-        sendErr(res, 'request body is missing');
+      if (body === null || typeof body !== 'object') {
+        sendErr(res, 'request is empty');
       } else {
-        let log = body.log;
-        if (log.data === null || log.data === undefined) {
+        if (body.message === null || body.message === undefined) {
           sendErr(res, 'message is missing from request body');
-        } else if (log.createdBy === null || log.createdBy === undefined) {
-          sendErr(res, 'createdBy is missing from request body');
         } else {
           message = {
-            data: log.data,
-            author: log.createdBy,
-            level: log.level,
-            topic: log.topic
+            message: body.message
           };
+
+          if (body.level) {
+            message.level = body.level;
+          }
+
+          if (body.topic) {
+            message.topic = body.topic;
+          }
+
+          if (body.author) {
+            message.author = body.author;
+          }
 
           logger.info(message);
 
@@ -50,7 +56,7 @@ export default(app, logger) => {
       let skip = req.query.skip || 0;
       let limit = req.query.limit || 100;
 
-      mongoose.model('Message').find().skip(skip).limit(limit).sort('-createdBy').exec(function(err, messages) {
+      mongoose.model('Message').find().skip(skip).limit(limit).sort('-author').exec(function(err, messages) {
         if (err) {
           logger.error(err);
         }

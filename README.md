@@ -18,11 +18,12 @@ curl http://0.0.0.0:3030/read
 vrbose expects the request body to be an object with the following properties:
 
 1. message: object (required)
-1. createdBy: string (required)
-1. createdOn: date (optional)
+1. author: string (optional)
+1. level: string (optional)
+1. topic: string (optional)
 
 ### example request
 
 ```
-curl -H "Content-Type: application/json" -X POST -d '{"data":"dev deployment started", "createdBy": "git-hook"}' http://0.0.0.0:3030/write
+curl -H "Content-Type: application/json" -X POST -d '{"message":"dev deployment started", "author": "git-hook"}' http://0.0.0.0:3030/write
 ```
