@@ -6,6 +6,7 @@ import MessageSchema from './schema/Message';
 import log4js from 'log4js';
 import bodyParser from 'body-parser';
 import apiFactory from './api';
+import AppendWatcher from './appendwatcher';
 
 // logger configuration
 log4js.configure('./config/log4js.json');
@@ -45,3 +46,12 @@ app.get('/read', api.read);
 app.server.listen(app.config.port, function(){
   logger.info('vrbose is running on port', app.config.port);
 });
+
+const appendWatcher = AppendWatcher.watchAppend('myfile.txt');
+appendWatcher
+  .on('append', function (message) {
+    console.log(message);
+  })
+  .on('error', function (err) {
+    throw err;
+  });
