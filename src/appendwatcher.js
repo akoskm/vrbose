@@ -27,7 +27,6 @@ const AppendWatcher = function (filename) {
       startPos = 0;
     }
     var readStream = fs.createReadStream(filename, { start: startPos, end: endPos });
-    console.log(startPos, endPos);
     var output = '';
     readStream
       .on('data', function (chunk) {
