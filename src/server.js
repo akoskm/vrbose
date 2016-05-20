@@ -47,10 +47,16 @@ app.server.listen(app.config.port, function(){
   logger.info('vrbose is running on port', app.config.port);
 });
 
-const appendWatcher = AppendWatcher.watchAppend('myfile.txt');
+const appendWatcher = AppendWatcher.watchAppend('myfile1.txt');
 appendWatcher
   .on('append', function (message) {
     console.log(message);
+    if (message) {
+      var result = message.match(/\[INFO\]/);
+      if (result !== null) {
+        console.log(result.length);
+      }
+    }
   })
   .on('error', function (err) {
     throw err;
