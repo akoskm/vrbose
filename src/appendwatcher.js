@@ -3,17 +3,23 @@ import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
 
-const filename = 'myfile.txt';
+let _filename = 'myfile.txt';
+let _delimiter = '\n';
 
 var startPos = 0;
 var endPos = 100;
 
-const AppendWatcher = function (filename) {
+const AppendWatcher = function (filename, delimiter = '\n') {
+  if (typeof filename !== 'string') {
+    throw 'Filename is required'
+  }
   events.EventEmitter.call(this);
+  _filename = filename;
+  _delimiter = delimiter;
 
   var self = this;
 
-  chokidar.watch(filename, {
+  chokidar.watch(_filename, {
     awaitWriteFinish: {
       stabilityThreshold: 2000,
       pollInterval: 100
@@ -26,21 +32,29 @@ const AppendWatcher = function (filename) {
     if (endPos < startPos) {
       startPos = 0;
     }
-    var readStream = fs.createReadStream(filename, { start: startPos, end: endPos });
-    var output = '';
+    var readStream = fs.createReadStream(_filename, { start: startPos, end: endPos });
+    var buffer = '';
     readStream
       .on('data', function (chunk) {
-        output += chunk.toString();
-        startPos = endPos;
+        buffer += chunk;
+        let boundary = buffer.indexOf(_delimiter);
+        // interpret chunks delimited by _delimiter
+        while (boundary !== -1) {
+          let input = buffer.substr(0, boundary);
+          buffer = buffer.substr(boundary + 1);
+          self.emit('append', input);
+          boundary = buffer.indexOf(_delimiter);
+        }
       })
       .on('end', function () {
-        self.emit('append', output);
+        // set start position to last character
+        startPos = endPos;
       });
   }).on('error', function (error) {
     self.emit('error', error);
   });;
 
-  console.log('Watching', filename, 'for changes');
+  console.log('Watching', _filename, 'for changes');
 };
 
 util.inherits(AppendWatcher, events.EventEmitter);
