@@ -3,8 +3,8 @@ import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
 
-let _filename = 'myfile.txt';
-let _delimiter = '\n';
+let _filename;
+let _delimiter;
 
 var startPos = 0;
 var endPos = 100;
