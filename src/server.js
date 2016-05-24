@@ -47,15 +47,25 @@ app.server.listen(app.config.port, function(){
   logger.info('vrbose is running on port', app.config.port);
 });
 
-const appendWatcher = AppendWatcher.watchAppend('myfile1.txt');
+let watcherCfg = {
+  path: '.',
+  filename: 'myfile1.txt',
+  matchers: [/\[INFO\]/, /\[ERROR\]/]
+}
+
+const appendWatcher = AppendWatcher.watch(watcherCfg.filename);
+let counter = 0;
 appendWatcher
   .on('append', function (message) {
-    console.log(message);
     if (message) {
-      var result = message.match(/\[INFO\]/);
-      if (result !== null) {
-        console.log(result.length);
-      }
+      var matches = watcherCfg.matchers.map(function (m) {
+        var result = message.match(m);
+        return {
+          matcher: m,
+          result: result ? result.length : 0
+        }
+      });
+      console.log(matches);
     }
   })
   .on('error', function (err) {

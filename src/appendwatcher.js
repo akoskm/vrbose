@@ -60,6 +60,6 @@ const AppendWatcher = function (filename, delimiter = '\n') {
 util.inherits(AppendWatcher, events.EventEmitter);
 
 exports.AppendWatcher = AppendWatcher;
-exports.watchAppend = function (filename) {
+exports.watch = function (filename) {
   return new AppendWatcher(filename);
 };
