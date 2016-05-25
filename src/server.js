@@ -2,7 +2,6 @@ import config from './config';
 import mongoose from 'mongoose';
 import express from 'express';
 import http from 'http';
-import MessageSchema from './schema/Message';
 import WatcherSchema from './schema/Watcher';
 import log4js from 'log4js';
 import bodyParser from 'body-parser';
@@ -30,7 +29,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //setup mongoose
 mongoose.connect(config.mongodb.uri, mongoConfig);
-MessageSchema(autoIndex);
 WatcherSchema(autoIndex);
 
 app.get('/', function (req, res) {
