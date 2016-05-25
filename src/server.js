@@ -49,6 +49,8 @@ app.server.listen(app.config.port, function(){
 
 let watcherCfg = {
   path: '.',
+  name: 'INFO and ERROR',
+  description: 'Watch for [INFO] and [ERROR] occurance in this file',
   filename: 'myfile1.txt',
   matchers: [/\[INFO\]/, /\[ERROR\]/]
 }
