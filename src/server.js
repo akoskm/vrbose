@@ -6,7 +6,6 @@ import MessageSchema from './schema/Message';
 import WatcherSchema from './schema/Watcher';
 import log4js from 'log4js';
 import bodyParser from 'body-parser';
-import apiFactory from './api';
 import AppendWatcher from './appendwatcher';
 
 // logger configuration
@@ -38,12 +37,6 @@ WatcherSchema(autoIndex);
 app.get('/', function (req, res) {
   res.send('vrbose is running');
 });
-
-const api = apiFactory(app, logger);
-
-app.post('/write', api.write);
-
-app.get('/read', api.read);
 
 app.server.listen(app.config.port, function(){
   logger.info('vrbose is running on port', app.config.port);
