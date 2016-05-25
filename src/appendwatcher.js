@@ -3,23 +3,23 @@ import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
 
-let _filename;
-let _delimiter;
+let filename;
+let delimiter;
+let startPos = 0;
+let endPos = 100;
 
-var startPos = 0;
-var endPos = 100;
-
-const AppendWatcher = function (filename, delimiter = '\n') {
-  if (typeof filename !== 'string') {
+const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
+  if (typeof _filename !== 'string') {
     throw 'Filename is required'
   }
   events.EventEmitter.call(this);
-  _filename = filename;
-  _delimiter = delimiter;
+  filename = _filename;
+  delimiter = _delimiter;
+  startPos = _startPos;
 
   var self = this;
 
-  chokidar.watch(_filename, {
+  chokidar.watch(filename, {
     awaitWriteFinish: {
       stabilityThreshold: 2000,
       pollInterval: 100
@@ -32,18 +32,18 @@ const AppendWatcher = function (filename, delimiter = '\n') {
     if (endPos < startPos) {
       startPos = 0;
     }
-    var readStream = fs.createReadStream(_filename, { start: startPos, end: endPos });
+    var readStream = fs.createReadStream(filename, { start: startPos, end: endPos });
     var buffer = '';
     readStream
       .on('data', function (chunk) {
         buffer += chunk;
-        let boundary = buffer.indexOf(_delimiter);
-        // interpret chunks delimited by _delimiter
+        let boundary = buffer.indexOf(delimiter);
+        // interpret chunks delimited by delimiter
         while (boundary !== -1) {
           let input = buffer.substr(0, boundary);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', input);
-          boundary = buffer.indexOf(_delimiter);
+          self.emit('append', input, endPos);
+          boundary = buffer.indexOf(delimiter);
         }
       })
       .on('end', function () {
@@ -54,12 +54,12 @@ const AppendWatcher = function (filename, delimiter = '\n') {
     self.emit('error', error);
   });;
 
-  console.log('Watching', _filename, 'for changes');
+  console.log('Watching', filename, 'for changes');
 };
 
 util.inherits(AppendWatcher, events.EventEmitter);
 
 exports.AppendWatcher = AppendWatcher;
-exports.watch = function (filename) {
-  return new AppendWatcher(filename);
+exports.watch = function (filename, startPos) {
+  return new AppendWatcher(filename, startPos);
 };

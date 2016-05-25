@@ -65,45 +65,49 @@ mongoose.model('Watcher').find(function (err, docs) {
     mongoose.model('Watcher').create(newWatcherCfg, function (err, doc) {
       if (err) throw err
       console.log(doc);
-    })
+    });
   }
-});
+  let watcher = docs[0];
 
-const appendWatcher = AppendWatcher.watch(newWatcherCfg.filename);
-let counter = 0;
-appendWatcher
-  .on('append', function (message) {
-    if (message) {
-      var matches = newWatcherCfg.matchers.map(function (m) {
-        var result = message.match(m.regex);
-        return {
-          name: m.name,
-          regex: m.regex,
-          count: result ? result.length : 0
-        }
-      });
-      var updateMatchers = matches.map(function (mr) {
-        return {
-          query: {
-            'id': newWatcherCfg.id,
-            'matchers.name': mr.name
-          },
-          update: {
-            $inc: {
-              'total': mr.count,
-              'matchers.$.count': mr.count
-            }
+  const appendWatcher = AppendWatcher.watch(watcher.filename, watcher.endPos);
+  let counter = 0;
+  appendWatcher
+    .on('append', function (message, endPos) {
+      if (message) {
+        var matches = newWatcherCfg.matchers.map(function (m) {
+          var result = message.match(m.regex);
+          return {
+            name: m.name,
+            regex: m.regex,
+            count: result ? result.length : 0
           }
-        };
-      });
-      updateMatchers.forEach(function (um) {
-        mongoose.model('Watcher').update(um.query, um.update, function (err, doc) {
-          if (err) throw err;
-          console.log(doc);
         });
-      });
-    }
-  })
-  .on('error', function (err) {
-    throw err;
-  });
+        var updateMatchers = matches.map(function (mr) {
+          return {
+            query: {
+              'id': newWatcherCfg.id,
+              'matchers.name': mr.name
+            },
+            update: {
+              $inc: {
+                'total': mr.count,
+                'matchers.$.count': mr.count
+              },
+              $set: {
+                endPos
+              }
+            }
+          };
+        });
+        updateMatchers.forEach(function (um) {
+          mongoose.model('Watcher').update(um.query, um.update, function (err, doc) {
+            if (err) throw err;
+            console.log(doc);
+          });
+        });
+      }
+    })
+    .on('error', function (err) {
+      throw err;
+    });
+});

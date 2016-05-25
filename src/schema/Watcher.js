@@ -9,6 +9,7 @@ export default(autoIndex) => {
     name: { type: String, required: true, default: 'New Watcher' },
     description: { type: String, default: '' },
     total: { type: Number, required: true, default: 0 },
+    endPos: { type: Number, required: true, default: 0 },
     matchers: [{
       name: { type: String, required: true, unique: true },
       regex: { type: String, required: true },
