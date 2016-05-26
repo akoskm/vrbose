@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
+import Table from 'react-bootstrap/lib/Table';
+import Row from 'react-bootstrap/lib/Row';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
@@ -20,7 +22,7 @@ class WatcherComponent extends React.Component {
       }
     };
 
-    this.createWatcher = this.createWatcher.bind(this);
+    this.saveWatcher = this.saveWatcher.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -40,7 +42,7 @@ class WatcherComponent extends React.Component {
     this.watcherRequest.abort();
   }
 
-  createWatcher() {
+  saveWatcher() {
     console.log(this.state);
   }
 
@@ -59,81 +61,114 @@ class WatcherComponent extends React.Component {
 
   render() {
     let watcher = this.state.watcher;
+    let buttonText = 'Create';
+    let matchersTable = (<Col xs={12} md={6} lg={6}/>);
+    if (watcher._id) {
+      buttonText = 'Save';
+    }
+    if (watcher.matchers && watcher.matchers.length > 0) {
+      matchersTable = (<Col xs={12} md={6} lg={6}>
+        <h4>Watchers</h4>
+        <Table responsive>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Regex</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+          {watcher.matchers.map(function (m) {
+            return (
+              <tr>
+                <td>{m.name}</td>
+                <td>{m.regex}</td>
+                <td>{m.count}</td>
+              </tr>
+            );
+          })}
+          </tbody>
+        </Table>
+      </Col>);
+    }
     return (
-      <div>
-        <h4>{watcher.name}</h4>
-        <Form horizontal>
-          <FormGroup controlId='id'>
-            <Col componentClass={ControlLabel} sm={2}>
-              ID
-            </Col>
-            <Col sm={10}>
-              <FormControl
-                type='text'
-                placeholder='AWSM-WTCHR-1'
-                onChange={this.handleChange}
-                data-prop='id'
-                value={watcher.id}
-              />
-              <HelpBlock>Must be Unique</HelpBlock>
-            </Col>
-          </FormGroup>
+      <Row>
+        <Col xs={12} md={6} lg={6}>
+          <h4>{watcher.name}</h4>
+          <Form horizontal>
+            <FormGroup controlId='id'>
+              <Col componentClass={ControlLabel} sm={2}>
+                ID
+              </Col>
+              <Col sm={10}>
+                <FormControl
+                  type='text'
+                  placeholder='AWSM-WTCHR-1'
+                  onChange={this.handleChange}
+                  data-prop='id'
+                  value={watcher.id}
+                />
+                <HelpBlock>Must be Unique</HelpBlock>
+              </Col>
+            </FormGroup>
 
-          <FormGroup controlId='name'>
-            <Col componentClass={ControlLabel} sm={2}>
-              Name
-            </Col>
-            <Col sm={10}>
-              <FormControl
-                type='text'
-                placeholder='Awesome watcher'
-                onChange={this.handleChange}
-                data-prop='name'
-                value={watcher.name}
-              />
-              <HelpBlock>Be more descriptive here</HelpBlock>
-            </Col>
-          </FormGroup>
+            <FormGroup controlId='name'>
+              <Col componentClass={ControlLabel} sm={2}>
+                Name
+              </Col>
+              <Col sm={10}>
+                <FormControl
+                  type='text'
+                  placeholder='Awesome watcher'
+                  onChange={this.handleChange}
+                  data-prop='name'
+                  value={watcher.name}
+                />
+                <HelpBlock>Be more descriptive here</HelpBlock>
+              </Col>
+            </FormGroup>
 
-          <FormGroup controlId='filename'>
-            <Col componentClass={ControlLabel} sm={2}>
-              Filename
-            </Col>
-            <Col sm={10}>
-              <FormControl
-                type='text'
-                placeholder='/var/log/vrbose.log'
-                onChange={this.handleChange}
-                data-prop='filename'
-                value={watcher.filename}
-              />
-              <HelpBlock>File to watch</HelpBlock>
-            </Col>
-          </FormGroup>
+            <FormGroup controlId='filename'>
+              <Col componentClass={ControlLabel} sm={2}>
+                Filename
+              </Col>
+              <Col sm={10}>
+                <FormControl
+                  type='text'
+                  placeholder='/var/log/vrbose.log'
+                  onChange={this.handleChange}
+                  data-prop='filename'
+                  value={watcher.filename}
+                />
+                <HelpBlock>File to watch</HelpBlock>
+              </Col>
+            </FormGroup>
 
-          <FormGroup>
-            <Col componentClass={ControlLabel} sm={2}>
-              Watchers
-            </Col>
-            <Col sm={10}>
-              <FormControl
-                componentClass='textarea'
-                onChange={this.handleChange}
-                data-prop='watchers'
-                value={watcher.watchers}
-              />
-            </Col>
-          </FormGroup>
+            <FormGroup>
+              <Col componentClass={ControlLabel} sm={2}>
+                Watchers
+              </Col>
+              <Col sm={10}>
+                <FormControl
+                  componentClass='textarea'
+                  onChange={this.handleChange}
+                  data-prop='watchers'
+                  value={watcher.watchers}
+                />
+              </Col>
+            </FormGroup>
 
-          <FormGroup>
-            <Col smOffset={2} sm={10}>
-              <Button type='button' onClick={this.createWatcher}>
-                Create
-              </Button>
-            </Col>
-          </FormGroup>
-        </Form>
-      </div>
+            <FormGroup>
+              <Col smOffset={2} sm={10}>
+                <Button type='button' onClick={this.saveWatcher}>
+                  {buttonText}
+                </Button>
+              </Col>
+            </FormGroup>
+          </Form>
+        </Col>
+        {matchersTable}
+      </Row>
     );
   }
 }
