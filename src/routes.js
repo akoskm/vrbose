@@ -1,10 +1,9 @@
 import AppComponent from './components/App';
 import IndexComponent from './components/Index';
-import RegisterComponent from './components/site/Register';
 import ProfileComponent from './components/Profile';
-import ActivationComponent from './components/site/Activation';
 import SignInComponent from './components/Signin';
-import Page from './components/page/Page';
+import WatchersComponent from './components/watchers/Watchers';
+import WatcherComponent from './components/watchers/Watcher';
 
 const routes = {
   path: '',
@@ -15,10 +14,6 @@ const routes = {
       component: IndexComponent
     },
     {
-      path: '/signup',
-      component: RegisterComponent
-    },
-    {
       path: '/signin',
       component: SignInComponent
     },
@@ -27,12 +22,12 @@ const routes = {
       component: ProfileComponent
     },
     {
-      path: '/activation/:token',
-      component: ActivationComponent
+      path: '/watchers',
+      component: WatchersComponent
     },
     {
-      path: '/page/:nameslug',
-      component: Page
+      path: '/watchers/new',
+      component: WatcherComponent
     }
   ]
 };
