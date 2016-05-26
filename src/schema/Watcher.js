@@ -5,6 +5,7 @@ let watcherSchema = new mongoose.Schema({
   path: { type: String, required: true, default: '.' },
   filename: { type: String, required: true },
   name: { type: String, required: true, default: 'New Watcher' },
+  delimiter: { type: String, required: true, default: '\n' },
   description: { type: String, default: '' },
   total: { type: Number, required: true, default: 0 },
   endPos: { type: Number, required: true, default: 0 },
