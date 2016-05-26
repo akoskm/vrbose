@@ -21,7 +21,8 @@ import webpack from 'webpack';
 import webpackConfig from '../webpack.config';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import multer  from 'multer';
+
+import watchertest from './watchertest';
 
 // logger configuration
 logger.initLogger(config);
@@ -152,9 +153,8 @@ api(app);
 // app-wide stuff
 app.config = config;
 
-const server = http.createServer(app);
-
-server.listen(app.config.port);
-server.on('listening', () => {
+app.server.listen(app.config.port);
+app.server.on('listening', () => {
   logger.instance.info('vrbose is running on port', app.config.port);
+  watchertest();
 });
