@@ -3,21 +3,37 @@ import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
 
+let id;
+let matchers;
 let filename;
 let delimiter;
 let startPos = 0;
 let endPos = 100;
 
-const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
-  if (typeof _filename !== 'string') {
-    throw 'Filename is required'
+const AppendWatcher = function (watcher) {
+  if (watcher === null || watcher === undefined) {
+    throw 'Watcher is empty';
+  }
+  if (typeof watcher !== 'object') {
+    throw 'Watcher must be object';
+  }
+  if (typeof watcher.filename !== 'string') {
+    throw 'Filename is required';
+  }
+  if (typeof watcher.delimiter !== 'string') {
+    throw 'Delimiter must be string';
+  }
+  if (!isNaN(watcher.startPos) || watcher.startPos < 1) {
+    throw 'startPos of watcher must be > 0';
   }
   events.EventEmitter.call(this);
-  filename = _filename;
-  delimiter = _delimiter;
-  startPos = _startPos;
+  filename = watcher.filename;
+  delimiter = watcher.delimiter;
+  startPos = watcher.startPos;
+  id = watcher.id;
+  matchers = watcher.matchers;
 
-  var self = this;
+  let self = this;
 
   chokidar.watch(filename, {
     awaitWriteFinish: {
@@ -32,8 +48,8 @@ const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
     if (endPos < startPos) {
       startPos = 0;
     }
-    var readStream = fs.createReadStream(filename, { start: startPos, end: endPos });
-    var buffer = '';
+    let readStream = fs.createReadStream(filename, { start: startPos, end: endPos });
+    let buffer = '';
     readStream
       .on('data', function (chunk) {
         buffer += chunk;
@@ -42,7 +58,7 @@ const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
         while (boundary !== -1) {
           let input = buffer.substr(0, boundary);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', input, endPos);
+          self.emit('append', input, endPos, id, matchers);
           boundary = buffer.indexOf(delimiter);
         }
       })
@@ -52,7 +68,7 @@ const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
       });
   }).on('error', function (error) {
     self.emit('error', error);
-  });;
+  });
 
   console.log('Watching', filename, 'for changes');
 };
@@ -60,6 +76,6 @@ const AppendWatcher = function (_filename, _startPos = 0, _delimiter = '\n') {
 util.inherits(AppendWatcher, events.EventEmitter);
 
 exports.AppendWatcher = AppendWatcher;
-exports.watch = function (filename, startPos) {
-  return new AppendWatcher(filename, startPos);
+exports.watch = function (watcher) {
+  return new AppendWatcher(watcher);
 };
