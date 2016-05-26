@@ -24,7 +24,7 @@ class HeaderComponent extends React.Component {
     };
 
     this.goToSignIn = this.goToSignIn.bind(this);
-    this.goToSignUp = this.goToSignUp.bind(this);
+    this.goToWatchers = this.goToWatchers.bind(this);
     this.goToProfile = this.goToProfile.bind(this);
     this.goToLanding = this.goToLanding.bind(this);
     this.signOut = this.signOut.bind(this);
@@ -34,8 +34,8 @@ class HeaderComponent extends React.Component {
     this.props.history.pushState(null, '/signin');
   }
 
-  goToSignUp(e) {
-    this.props.history.pushState(null, '/signup');
+  goToWatchers(e) {
+    this.props.history.pushState(null, '/watchers');
   }
 
   goToProfile(e) {
@@ -77,7 +77,6 @@ class HeaderComponent extends React.Component {
     } else {
       signUpButton = (
         <Nav pullRight>
-          <NavItem onClick={this.goToSignUp}>Sign Up</NavItem>
           <NavItem primary onClick={this.goToSignIn}>Sign In</NavItem>
         </Nav>
       );
@@ -89,6 +88,9 @@ class HeaderComponent extends React.Component {
             <a onClick={this.goToLanding}>vrbose</a>
           </Navbar.Brand>
         </Navbar.Header>
+        <Nav>
+          <NavItem onClick={this.goToWatchers}>Watchers</NavItem>
+        </Nav>
         <Nav pullRight>
           {userMenu}
         </Nav>
