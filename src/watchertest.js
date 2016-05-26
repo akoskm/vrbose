@@ -23,7 +23,7 @@ export default() => {
     }
     if (!docs || docs.length < 1) {
       mongoose.model('Watcher').create(newWatcherCfg, function (err, doc) {
-        if (err) throw err
+        if (err) throw err;
         console.log(doc);
       });
     }
@@ -34,23 +34,23 @@ export default() => {
     appendWatcher
       .on('append', function (message, endPos) {
         if (message) {
-          var matches = newWatcherCfg.matchers.map(function (m) {
-            var result = message.match(m.regex);
+          let matches = newWatcherCfg.matchers.map(function (m) {
+            let result = message.match(m.regex);
             return {
               name: m.name,
               regex: m.regex,
               count: result ? result.length : 0
-            }
+            };
           });
-          var updateMatchers = matches.map(function (mr) {
+          let updateMatchers = matches.map(function (mr) {
             return {
               query: {
-                'id': newWatcherCfg.id,
+                id: newWatcherCfg.id,
                 'matchers.name': mr.name
               },
               update: {
                 $inc: {
-                  'total': mr.count,
+                  total: mr.count,
                   'matchers.$.count': mr.count
                 },
                 $set: {
