@@ -23,6 +23,25 @@ const watcherApi = {
     });
 
     workflow.emit('getWatchers');
+  },
+
+  findWatcher(req, res, next) {
+    const workflow = workflowFactory(req, res);
+
+    workflow.on('findWatcher', function () {
+      mongoose.model('Watcher').findById(req.params.id, function (err, doc) {
+        if (err) {
+          logger.instance.error('Error while fetching watchers', err);
+          workflow.outcome.errors.push('Cannot fetch watchers');
+          return workflow.emit('response');
+        }
+
+        workflow.outcome.result = doc;
+        return workflow.emit('response');
+      });
+    });
+
+    workflow.emit('findWatcher');
   }
 };
 

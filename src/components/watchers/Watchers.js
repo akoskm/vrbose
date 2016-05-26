@@ -12,6 +12,7 @@ class WatchersComponent extends React.Component {
     };
 
     this.newWatcher = this.newWatcher.bind(this);
+    this.openWatcher = this.openWatcher.bind(this);
   }
 
   componentDidMount() {
@@ -33,6 +34,11 @@ class WatchersComponent extends React.Component {
     this.props.history.pushState(null, '/watchers/new');
   }
 
+  openWatcher(e) {
+    let id = e.target.attributes.getNamedItem('data-id').value;
+    this.props.history.pushState(null, '/watchers/' + id);
+  }
+
   render() {
     return (
       <div>
@@ -47,6 +53,7 @@ class WatchersComponent extends React.Component {
               <th>Filename</th>
               <th>Description</th>
               <th>Total</th>
+              <th/>
             </tr>
           </thead>
           <tbody>
@@ -60,6 +67,7 @@ class WatchersComponent extends React.Component {
                 <td>{watcher.filename}</td>
                 <td>{watcher.description}</td>
                 <td>{watcher.total}</td>
+                <td><a onClick={this.openWatcher} data-id={watcher._id}>Edit</a></td>
               </tr>
             );
           })}

@@ -26,6 +26,10 @@ const routes = {
       component: WatchersComponent
     },
     {
+      path: '/watchers/:id',
+      component: WatcherComponent
+    },
+    {
       path: '/watchers/new',
       component: WatcherComponent
     }
