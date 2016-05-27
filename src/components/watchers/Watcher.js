@@ -38,17 +38,33 @@ class WatcherComponent extends React.Component {
       }
     }.bind(this));
 
-    const socket = io('/ws/watchers/' + watcherId);
-    socket.on('connect', function () {
+    this.socket = io('/ws/watchers/' + watcherId);
+    this.socket.on('connect', function () {
       console.log('connected');
     });
-    socket.on('message', function (message) {
-      console.log(message);
+    this.socket.on('message', (message) => {
+      if (message && this.state.watcher.matchers) {
+        let wsMatchers = message.matchers;
+        let newMatcherState = this.state.watcher.matchers.map(function (curr) {
+          let original = curr;
+          let fromWs = wsMatchers.find(function (m) {
+            return m.name === curr.name;
+          });
+          if (fromWs) {
+            original.count = original.count + fromWs.count;
+          }
+          return original;
+        });
+        this.setState({
+          matchers: newMatcherState
+        });
+      }
     });
   }
 
   componentWillUnmount() {
     this.watcherRequest.abort();
+    this.socket.disconnect();
   }
 
   saveWatcher() {
