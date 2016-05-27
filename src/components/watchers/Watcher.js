@@ -171,22 +171,8 @@ class WatcherComponent extends React.Component {
                 </Col>
               </FormGroup>
 
-              <FormGroup>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Watchers
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    componentClass='textarea'
-                    onChange={this.handleChange}
-                    data-prop='watchers'
-                    value={watcher.watchers}
-                  />
-                </Col>
-              </FormGroup>
-
-              <FormGroup>
-                <Col smOffset={2} sm={10}>
+              <FormGroup className='pull-right'>
+                <Col sm={12}>
                   <Button type='button' onClick={this.saveWatcher}>
                     {buttonText}
                   </Button>
