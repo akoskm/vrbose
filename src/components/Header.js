@@ -82,7 +82,7 @@ class HeaderComponent extends React.Component {
       );
     }
     return (
-      <Navbar>
+      <Navbar inverse>
         <Navbar.Header>
           <Navbar.Brand>
             <a onClick={this.goToLanding}>vrbose</a>
