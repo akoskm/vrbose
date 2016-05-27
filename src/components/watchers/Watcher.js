@@ -11,6 +11,7 @@ import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import request from 'superagent';
 import io from 'socket.io-client';
+import Timeline from './Timeline';
 
 class WatcherComponent extends React.Component {
 
@@ -117,83 +118,90 @@ class WatcherComponent extends React.Component {
       </Col>);
     }
     return (
-      <Row>
-        <Col xs={12} md={6} lg={6}>
-          <h4>{watcher.name}</h4>
-          <Form horizontal>
-            <FormGroup controlId='id'>
-              <Col componentClass={ControlLabel} sm={2}>
-                ID
-              </Col>
-              <Col sm={10}>
-                <FormControl
-                  type='text'
-                  placeholder='AWSM-WTCHR-1'
-                  onChange={this.handleChange}
-                  data-prop='id'
-                  value={watcher.id}
-                />
-                <HelpBlock>Must be Unique</HelpBlock>
-              </Col>
-            </FormGroup>
+      <div>
+        <Row>
+          <Col xs={12} md={6} lg={6}>
+            <h4>{watcher.name}</h4>
+            <Form horizontal>
+              <FormGroup controlId='id'>
+                <Col componentClass={ControlLabel} sm={2}>
+                  ID
+                </Col>
+                <Col sm={10}>
+                  <FormControl
+                    type='text'
+                    placeholder='AWSM-WTCHR-1'
+                    onChange={this.handleChange}
+                    data-prop='id'
+                    value={watcher.id}
+                  />
+                  <HelpBlock>Must be Unique</HelpBlock>
+                </Col>
+              </FormGroup>
 
-            <FormGroup controlId='name'>
-              <Col componentClass={ControlLabel} sm={2}>
-                Name
-              </Col>
-              <Col sm={10}>
-                <FormControl
-                  type='text'
-                  placeholder='Awesome watcher'
-                  onChange={this.handleChange}
-                  data-prop='name'
-                  value={watcher.name}
-                />
-                <HelpBlock>Be more descriptive here</HelpBlock>
-              </Col>
-            </FormGroup>
+              <FormGroup controlId='name'>
+                <Col componentClass={ControlLabel} sm={2}>
+                  Name
+                </Col>
+                <Col sm={10}>
+                  <FormControl
+                    type='text'
+                    placeholder='Awesome watcher'
+                    onChange={this.handleChange}
+                    data-prop='name'
+                    value={watcher.name}
+                  />
+                  <HelpBlock>Be more descriptive here</HelpBlock>
+                </Col>
+              </FormGroup>
 
-            <FormGroup controlId='filename'>
-              <Col componentClass={ControlLabel} sm={2}>
-                Filename
-              </Col>
-              <Col sm={10}>
-                <FormControl
-                  type='text'
-                  placeholder='/var/log/vrbose.log'
-                  onChange={this.handleChange}
-                  data-prop='filename'
-                  value={watcher.filename}
-                />
-                <HelpBlock>File to watch</HelpBlock>
-              </Col>
-            </FormGroup>
+              <FormGroup controlId='filename'>
+                <Col componentClass={ControlLabel} sm={2}>
+                  Filename
+                </Col>
+                <Col sm={10}>
+                  <FormControl
+                    type='text'
+                    placeholder='/var/log/vrbose.log'
+                    onChange={this.handleChange}
+                    data-prop='filename'
+                    value={watcher.filename}
+                  />
+                  <HelpBlock>File to watch</HelpBlock>
+                </Col>
+              </FormGroup>
 
-            <FormGroup>
-              <Col componentClass={ControlLabel} sm={2}>
-                Watchers
-              </Col>
-              <Col sm={10}>
-                <FormControl
-                  componentClass='textarea'
-                  onChange={this.handleChange}
-                  data-prop='watchers'
-                  value={watcher.watchers}
-                />
-              </Col>
-            </FormGroup>
+              <FormGroup>
+                <Col componentClass={ControlLabel} sm={2}>
+                  Watchers
+                </Col>
+                <Col sm={10}>
+                  <FormControl
+                    componentClass='textarea'
+                    onChange={this.handleChange}
+                    data-prop='watchers'
+                    value={watcher.watchers}
+                  />
+                </Col>
+              </FormGroup>
 
-            <FormGroup>
-              <Col smOffset={2} sm={10}>
-                <Button type='button' onClick={this.saveWatcher}>
-                  {buttonText}
-                </Button>
-              </Col>
-            </FormGroup>
-          </Form>
-        </Col>
-        {matchersTable}
-      </Row>
+              <FormGroup>
+                <Col smOffset={2} sm={10}>
+                  <Button type='button' onClick={this.saveWatcher}>
+                    {buttonText}
+                  </Button>
+                </Col>
+              </FormGroup>
+            </Form>
+          </Col>
+          {matchersTable}
+        </Row>
+        <Row>
+          <Col md={12} lg={12} xs={12}>
+            <Timeline matchers={watcher.matchers}/>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }
