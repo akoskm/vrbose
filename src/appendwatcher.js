@@ -13,12 +13,16 @@ let startPos = 0;
 let endPos = 100;
 let socket = null;
 
-let emitMatches = function (matches) {
-  if (socket !== null) {
-    socket.emit('message', {
-      matchers: matches
-    });
-  }
+let extractMatches = function (input) {
+  let matches = matchers.map(function (m) {
+    let result = input.match(m.regex);
+    return {
+      name: m.name,
+      regex: m.regex,
+      count: result ? result.length : 0
+    };
+  });
+  return matches;
 };
 
 const AppendWatcher = function (watcher, watcherFactory) {
@@ -50,6 +54,9 @@ const AppendWatcher = function (watcher, watcherFactory) {
       } else {
         socket = _socket;
         socket.emit('connected');
+        socket.on('disconnect', function () {
+          socket.disconnect();
+        });
       }
     });
 
@@ -84,9 +91,13 @@ const AppendWatcher = function (watcher, watcherFactory) {
         // interpret chunks delimited by delimiter
         while (boundary !== -1) {
           let input = buffer.substr(0, boundary);
+          let matches = extractMatches(input);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', input, endPos, id, matchers, emitMatches);
+          self.emit('append', matches, endPos, id, matchers);
           boundary = buffer.indexOf(delimiter);
+          socket.emit('message', {
+            matchers: matches
+          });
         }
       })
       .on('end', function () {

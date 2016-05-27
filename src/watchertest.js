@@ -22,16 +22,8 @@ export default(watcherFactory) => {
   }
 
   // this much parameters horrible
-  let appendListener = function (message, endPos, id, matchers, cb) {
-    if (message) {
-      let matches = matchers.map(function (m) {
-        let result = message.match(m.regex);
-        return {
-          name: m.name,
-          regex: m.regex,
-          count: result ? result.length : 0
-        };
-      });
+  let appendListener = function (matches, endPos, id, matchers) {
+    if (matches) {
       let updateMatchers = matches.map(function (mr) {
         return {
           query: {
@@ -52,7 +44,6 @@ export default(watcherFactory) => {
       updateMatchers.forEach(function (um) {
         mongoose.model('Watcher').update(um.query, um.update, function (err, doc) {
           if (err) throw err;
-          cb(matches);
         });
       });
     }
