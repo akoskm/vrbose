@@ -1,4 +1,5 @@
 import { logger } from '../logger';
+import config from '../../config';
 
 import emailjs from 'emailjs/email';
 
@@ -48,7 +49,7 @@ export default (req, res, options) => {
 
       let attachments = [];
       let i = 0;
-      let emailer = emailjs.server.connect(req.app.config.smtp.credentials);
+      let emailer = emailjs.server.connect(config.smtp.credentials);
 
       if (htmlMessage) {
         attachments.push({ data: htmlMessage, alternative: true });

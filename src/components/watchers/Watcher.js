@@ -10,6 +10,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import request from 'superagent';
+import io from 'socket.io-client';
 
 class WatcherComponent extends React.Component {
 
@@ -36,6 +37,14 @@ class WatcherComponent extends React.Component {
         });
       }
     }.bind(this));
+
+    const socket = io('/ws/watchers/' + watcherId);
+    socket.on('connect', function () {
+      console.log('connected');
+    });
+    socket.on('message', function (message) {
+      console.log(message);
+    });
   }
 
   componentWillUnmount() {

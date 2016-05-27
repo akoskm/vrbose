@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import AppendWatcher from './appendwatcher';
 import { logger } from './util/logger';
 
-export default() => {
+export default(watcherFactory) => {
   // let newWatcherCfg = {
   //   id: 'INFO_AND_ERROR',
   //   path: '.',
@@ -17,8 +17,12 @@ export default() => {
   //     regex: /\[ERROR\]/
   //   }]
   // };
+  if (watcherFactory === null || watcherFactory === undefined) {
+    throw 'WatcherFactory is empty';
+  }
 
-  let appendListener = function (message, endPos, id, matchers) {
+  // this much parameters horrible
+  let appendListener = function (message, endPos, id, matchers, cb) {
     if (message) {
       let matches = matchers.map(function (m) {
         let result = message.match(m.regex);
@@ -48,7 +52,7 @@ export default() => {
       updateMatchers.forEach(function (um) {
         mongoose.model('Watcher').update(um.query, um.update, function (err, doc) {
           if (err) throw err;
-          console.log(doc);
+          cb(matches);
         });
       });
     }
@@ -67,9 +71,11 @@ export default() => {
       let wLength = docs.length;
       for (let i = 0; i < wLength; i++) {
         let watcher = docs[i];
-        AppendWatcher.watch(watcher)
-          .on('append', appendListener)
-          .on('error', errorListener);
+        if (watcher) {
+          AppendWatcher.watch(watcher, watcherFactory)
+            .on('append', appendListener)
+            .on('error', errorListener);
+        }
       }
     } else {
       logger.instance.info('No watchers found.');

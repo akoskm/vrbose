@@ -3,7 +3,7 @@ import config from './config';
 import mongoose from 'mongoose';
 import csrf from 'csurf';
 import React from 'react';
-import io from 'socket.io';
+import SocketIO from 'socket.io';
 
 import passport from './util/passport';
 import { logger } from './util/logger';
@@ -48,6 +48,7 @@ const sessionConfig = {
 
 // create app
 const app = express();
+const server = http.Server(app);
 
 // setup mongoose
 mongoose.connect(config.mongodb.uri, mongoConfig);
@@ -56,8 +57,6 @@ mongoose.connect(config.mongodb.uri, mongoConfig);
 logger.initLogger(config);
 
 // configure app
-app.config = config;
-app.server = http.Server(app);
 app.disable('x-powered-by');
 // app.set('port', config.port);
 app.use(bodyParser.json());
@@ -125,8 +124,12 @@ app.set('view engine', 'ejs');
 // server side resources
 api(app);
 
-app.server.listen(app.config.port);
-app.server.on('listening', () => {
-  logger.instance.info('vrbose is running on port', app.config.port);
-  watchertest();
+// socket.io setup
+let watcherFactory = new SocketIO(server);
+
+server.listen(config.port);
+server.on('listening', () => {
+  logger.instance.info('vrbose is running on port', config.port);
+  // fix this awful injection
+  watchertest(watcherFactory);
 });

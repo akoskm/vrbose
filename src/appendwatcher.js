@@ -3,14 +3,25 @@ import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
 
+import { logger } from './util/logger';
+
 let id;
 let matchers;
 let filename;
 let delimiter;
 let startPos = 0;
 let endPos = 100;
+let socket = null;
 
-const AppendWatcher = function (watcher) {
+let emitMatches = function (matches) {
+  if (socket !== null) {
+    socket.emit('message', {
+      matchers: matches
+    });
+  }
+};
+
+const AppendWatcher = function (watcher, watcherFactory) {
   if (watcher === null || watcher === undefined) {
     throw 'Watcher is empty';
   }
@@ -26,6 +37,22 @@ const AppendWatcher = function (watcher) {
   if (!isNaN(watcher.startPos) || watcher.startPos < 1) {
     throw 'startPos of watcher must be > 0';
   }
+  if (watcherFactory === null || watcherFactory === undefined) {
+    throw 'Watcher is empty';
+  }
+
+  // create watcher instance bind to watcher._id
+  watcherFactory
+    .of('/ws/watchers/' + watcher._id)
+    .on('connection', (_socket) => {
+      if (!_socket) {
+        throw 'Failed to establish socket connection';
+      } else {
+        socket = _socket;
+        socket.emit('connected');
+      }
+    });
+
   events.EventEmitter.call(this);
   filename = watcher.filename;
   delimiter = watcher.delimiter;
@@ -58,7 +85,7 @@ const AppendWatcher = function (watcher) {
         while (boundary !== -1) {
           let input = buffer.substr(0, boundary);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', input, endPos, id, matchers);
+          self.emit('append', input, endPos, id, matchers, emitMatches);
           boundary = buffer.indexOf(delimiter);
         }
       })
@@ -76,6 +103,6 @@ const AppendWatcher = function (watcher) {
 util.inherits(AppendWatcher, events.EventEmitter);
 
 exports.AppendWatcher = AppendWatcher;
-exports.watch = function (watcher) {
-  return new AppendWatcher(watcher);
+exports.watch = function (watcher, watcherFactory) {
+  return new AppendWatcher(watcher, watcherFactory);
 };

@@ -49,6 +49,7 @@
     "react-select": "^1.0.0-beta13",
     "serve-favicon": "^2.3.0",
     "socket.io": "^1.4.6",
+    "socket.io-client": "^1.4.6",
     "superagent": "^2.0.0-alpha.3"
   },
   "devDependencies": {
