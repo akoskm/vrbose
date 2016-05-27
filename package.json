@@ -40,8 +40,6 @@
     "multer": "^1.1.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "pg": "^4.4.3",
-    "pg-hstore": "^2.3.2",
     "react": "^0.14.7",
     "react-bootstrap": "^0.29.0",
     "react-dom": "^0.14.3",
@@ -50,6 +48,7 @@
     "react-router": "^1.0.0",
     "react-select": "^1.0.0-beta13",
     "serve-favicon": "^2.3.0",
+    "socket.io": "^1.4.6",
     "superagent": "^2.0.0-alpha.3"
   },
   "devDependencies": {
