@@ -1,10 +1,10 @@
 import path from 'path';
 import config from './config';
 import mongoose from 'mongoose';
-import passport from 'passport';
 import csrf from 'csurf';
 import React from 'react';
-import CustomStrategy from './util/passport/strategy-local';
+
+import passport from './util/passport';
 import { logger } from './util/logger';
 import favicon from 'serve-favicon';
 import cookieParser from 'cookie-parser';
@@ -50,9 +50,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // setup mongoose
 mongoose.connect(config.mongodb.uri, mongoConfig);
 
-// passpost strategy
-const LocalStrategy = require('passport-local').Strategy;
-
 const mongoStore = connectMongo(session);
 const sessionConfig = {
   // according to https://github.com/expressjs/session#resave
@@ -84,8 +81,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(config.cryptoKey));
 
 app.use(session(sessionConfig));
-app.use(passport.initialize());
-app.use(passport.session());
+
+// must initialize passport after session(sessionConfig)
+passport(app);
+
 app.use(csrf({
   cookie: {
     signed: true
@@ -119,33 +118,6 @@ app.locals.copyrightName = config.companyName;
 app.locals.cacheBreaker = 'br34k-01';
 
 app.set('view engine', 'ejs');
-
-let localStragety = new CustomStrategy();
-
-// passport setup
-passport.use(new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'passw'
-}, localStragety.authenticate));
-
-passport.serializeUser(function (user, done) {
-  done(null, user._id);
-});
-
-passport.deserializeUser(function (_id, done) {
-  if (mongoose.Types.ObjectId.isValid(_id)) {
-    mongoose.model('User').findById(_id, function (err, user) {
-      if (err) {
-        done(err, null);
-      }
-      if (user) {
-        done(null, localStragety.filterUser(user.toJSON()));
-      }
-    });
-  } else {
-    done('Invalid authentication request', null);
-  }
-});
 
 // server side resources
 api(app);
