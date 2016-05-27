@@ -6,7 +6,7 @@ import Input from 'react-bootstrap/lib/Input';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 
-export default class IndexComponent extends React.Component {
+export default class ProfileComponent extends React.Component {
 
   constructor(props) {
     super(props);

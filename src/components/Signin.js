@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'jquery';
+import request from 'superagent';
 import { Navigation } from 'react-router';
 import { dispatch } from '../stores/user/UserDispatcher';
 
@@ -42,9 +42,10 @@ class SignInComponent extends React.Component {
         this.state.passwError = 'Password is required';
       }
     } else {
-      $.post('/api/login', this.state).done(function (data) {
-        if (data.success) {
-          let user = data.user;
+      request.post('/api/login').send(this.state).end(function (err, data) {
+        let response = data.body;
+        if (response.success) {
+          let user = response.user;
           self.setState({
             username: user.username,
             status: user.status
