@@ -3,7 +3,7 @@ import path from 'path';
 let config = {};
 
 config.workingDir = path.join(__dirname, '..');
-config.port = process.env.PORT || 3006;
+config.port = process.env.PORT || 3000;
 config.mongodb = {
   // vrbose db, user and a messages collection has to be created
   // use vrbose

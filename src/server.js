@@ -3,6 +3,7 @@ import config from './config';
 import mongoose from 'mongoose';
 import csrf from 'csurf';
 import React from 'react';
+import io from 'socket.io';
 
 import passport from './util/passport';
 import { logger } from './util/logger';
@@ -24,32 +25,16 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import watchertest from './watchertest';
 
-// logger configuration
-logger.initLogger(config);
-
 // determine environment type
 const nodeEnv = process.env.NODE_ENV || 'development';
 
-const app = express();
 const mongoConfig = {
   server: {
     poolSize: config.poolSize
   }
 };
-const autoIndex = (nodeEnv === 'development');
-logger.instance.info('autoIndex:', autoIndex);
 
-
-app.config = config;
-app.server = http.createServer(app);
-app.disable('x-powered-by');
-app.set('port', config.port);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// setup mongoose
-mongoose.connect(config.mongodb.uri, mongoConfig);
-
+// session configuration
 const mongoStore = connectMongo(session);
 const sessionConfig = {
   // according to https://github.com/expressjs/session#resave
@@ -61,6 +46,24 @@ const sessionConfig = {
   cookie: {}
 };
 
+// create app
+const app = express();
+
+// setup mongoose
+mongoose.connect(config.mongodb.uri, mongoConfig);
+
+// initialize logger
+logger.initLogger(config);
+
+// configure app
+app.config = config;
+app.server = http.Server(app);
+app.disable('x-powered-by');
+// app.set('port', config.port);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// webpack stuff
 if (nodeEnv === 'development') {
   const compiler = webpack(webpackConfig);
   app.use(webpackDevMiddleware(compiler, {
@@ -121,9 +124,6 @@ app.set('view engine', 'ejs');
 
 // server side resources
 api(app);
-
-// app-wide stuff
-app.config = config;
 
 app.server.listen(app.config.port);
 app.server.on('listening', () => {
