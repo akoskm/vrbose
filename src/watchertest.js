@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import AppendWatcher from './appendwatcher';
 import { logger } from './util/logger';
 
-export default(watcherFactory) => {
+export default() => {
   // let newWatcherCfg = {
   //   id: 'INFO_AND_ERROR',
   //   path: '.',
@@ -17,11 +17,7 @@ export default(watcherFactory) => {
   //     regex: /\[ERROR\]/
   //   }]
   // };
-  if (watcherFactory === null || watcherFactory === undefined) {
-    throw 'WatcherFactory is empty';
-  }
 
-  // this much parameters horrible
   let appendListener = function (matches, endPos, id, matchers) {
     if (matches) {
       let updateMatchers = matches.map(function (mr) {
@@ -63,7 +59,7 @@ export default(watcherFactory) => {
       for (let i = 0; i < wLength; i++) {
         let watcher = docs[i];
         if (watcher) {
-          AppendWatcher.watch(watcher, watcherFactory)
+          AppendWatcher.watch(watcher)
             .on('append', appendListener)
             .on('error', errorListener);
         }

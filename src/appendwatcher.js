@@ -2,6 +2,7 @@ import fs from 'fs';
 import util from 'util';
 import events from 'events';
 import chokidar from 'chokidar';
+import SocketIOFactory from './util/socketio';
 
 import { logger } from './util/logger';
 
@@ -25,7 +26,7 @@ let extractMatches = function (input) {
   return matches;
 };
 
-const AppendWatcher = function (watcher, watcherFactory) {
+const AppendWatcher = function (watcher) {
   if (watcher === null || watcher === undefined) {
     throw 'Watcher is empty';
   }
@@ -41,12 +42,9 @@ const AppendWatcher = function (watcher, watcherFactory) {
   if (!isNaN(watcher.startPos) || watcher.startPos < 1) {
     throw 'startPos of watcher must be > 0';
   }
-  if (watcherFactory === null || watcherFactory === undefined) {
-    throw 'Watcher is empty';
-  }
 
   // create watcher instance bind to watcher._id
-  watcherFactory
+  SocketIOFactory.getInstance()
     .of('/ws/watchers/' + watcher._id)
     .on('connection', (_socket) => {
       if (!_socket) {
@@ -114,6 +112,6 @@ const AppendWatcher = function (watcher, watcherFactory) {
 util.inherits(AppendWatcher, events.EventEmitter);
 
 exports.AppendWatcher = AppendWatcher;
-exports.watch = function (watcher, watcherFactory) {
-  return new AppendWatcher(watcher, watcherFactory);
+exports.watch = function (watcher) {
+  return new AppendWatcher(watcher);
 };
