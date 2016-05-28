@@ -39,8 +39,8 @@ const AppendWatcher = function (watcher) {
   if (typeof watcher.delimiter !== 'string') {
     throw 'Delimiter must be string';
   }
-  if (!isNaN(watcher.startPos) || watcher.startPos < 1) {
-    throw 'startPos of watcher must be > 0';
+  if (isNaN(watcher.endPos) || !isFinite(watcher.endPos)) {
+    throw 'endPos must be a number';
   }
 
   // create watcher instance bind to watcher._id
@@ -61,7 +61,7 @@ const AppendWatcher = function (watcher) {
   events.EventEmitter.call(this);
   filename = watcher.filename;
   delimiter = watcher.delimiter;
-  startPos = watcher.startPos;
+  startPos = watcher.endPos;
   id = watcher.id;
   matchers = watcher.matchers;
 
