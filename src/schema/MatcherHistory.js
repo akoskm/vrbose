@@ -6,4 +6,4 @@ let matcherHistorySchema = new mongoose.Schema({
 });
 matcherHistorySchema.set('autoIndex', (process.env.NODE_ENV === 'development'));
 
-mongoose.model('matcherHistory', matcherHistorySchema);
+mongoose.model('MatcherHistory', matcherHistorySchema);
