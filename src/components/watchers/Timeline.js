@@ -11,13 +11,16 @@ const LineChart = require('react-chartjs').Bar;
 
 const Timeline = (props) => {
 
-  let dataSet = [];
-  let labelsText = [];
+  // make these configurable
   const resolution = 30;
   const iterations = 10;
 
+  let dataSet = [[], []];
+  let labelsText = [[], []];
+
   let oldTime;
   let startTime = moment();
+  let currentTime = moment();
   const isBetween = (h) => {
     let createdOn = moment(h.createdOn);
     return createdOn.isBetween(startTime, oldTime);
@@ -25,47 +28,55 @@ const Timeline = (props) => {
 
   const matchers = props.matchers;
   if (matchers && matchers.length > 0) {
-    let matcher = matchers[0];
-    if (matcher.history) {
-      let last = matcher.history[matcher.history.length - 1];
-      if (last) {
-        for (let i = 0; i < iterations; i++) {
-          // labels.unshift(startTime.format('HH:mm:ss'));
-          oldTime = moment(startTime);
-          startTime.subtract(resolution, 'm');
-          labelsText.unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
+    const matchersLength = matchers.length;
+    for (let j = 0; j < matchersLength; j++) {
+      let matcher = matchers[j];
+      if (matcher.history) {
+        let last = matcher.history[matcher.history.length - 1];
+        if (last) {
+          startTime = moment(currentTime);
+          for (let i = 0; i < iterations; i++) {
+            // labels.unshift(startTime.format('HH:mm:ss'));
+            oldTime = moment(startTime);
+            startTime.subtract(resolution, 'm');
+            labelsText[j].unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
 
-          let between = matcher.history.filter(isBetween);
-          let total = between.reduce(function (prev, curr) {
-            return prev + curr.total;
-          }, 0);
-          dataSet.unshift(total);
+            let between = matcher.history.filter(isBetween);
+            console.log(between);
+            let total = between.reduce(function (prev, curr) {
+              return prev + curr.total;
+            }, 0);
+            dataSet[j].unshift(total);
+          }
         }
       }
     }
 
-    let data = {
-      labels: labelsText,
-      datasets: [{
-        label: 'My First dataset',
-        fillColor: 'rgba(220,220,220,0.2)',
-        strokeColor: 'rgba(220,220,220,1)',
-        pointColor: 'rgba(220,220,220,1)',
-        pointStrokeColor: '#fff',
-        pointHighlightFill: '#fff',
-        pointHighlightStroke: 'rgba(220,220,220,1)',
-        data: dataSet
-      }]
-    };
     let options = {
       responsive: true,
       maintainAspectRatio: true
     };
+
     return (
       <div>
         <Row>
           <Col md={12} xs={12} lg={12}>
-            <LineChart data={data} options={options} width='600' height='250'/>
+            {labelsText.map(function (labels, i) {
+              let data = {
+                labels,
+                datasets: [{
+                  label: 'My First dataset',
+                  fillColor: 'rgba(220,220,220,0.2)',
+                  strokeColor: 'rgba(220,220,220,1)',
+                  pointColor: 'rgba(220,220,220,1)',
+                  pointStrokeColor: '#fff',
+                  pointHighlightFill: '#fff',
+                  pointHighlightStroke: 'rgba(220,220,220,1)',
+                  data: dataSet[i]
+                }]
+              };
+              return (<LineChart data={data} options={options} width='600' height='250'/>);
+            })}
           </Col>
         </Row>
       </div>
