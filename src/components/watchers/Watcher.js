@@ -56,9 +56,6 @@ class WatcherComponent extends React.Component {
           }
           return original;
         });
-        this.setState({
-          matchers: newMatcherState
-        });
       }
     });
   }
@@ -184,7 +181,7 @@ class WatcherComponent extends React.Component {
         </Row>
         <Row>
           <Col md={12} lg={12} xs={12}>
-            <Timeline matchers={watcher.matchers}/>
+            <Timeline/>
           </Col>
         </Row>
       </div>
