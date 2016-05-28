@@ -32,7 +32,8 @@ const watcherApi = {
       mongoose.model('Watcher')
         .findById(req.params.id)
         .populate('matchers.history')
-        .slice('matchers.history', [0, 10])
+        .sort({ 'matchers.history': 1 })
+        .slice('matchers.history', [0, 50])
         .exec(function (err, doc) {
           if (err) {
             logger.instance.error('Error while fetching watchers', err);
