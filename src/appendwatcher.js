@@ -91,11 +91,13 @@ const AppendWatcher = function (watcher) {
           let input = buffer.substr(0, boundary);
           let matches = extractMatches(input);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', matches, endPos, id, matchers);
+          self.emit('append', matches, endPos, id);
           boundary = buffer.indexOf(delimiter);
-          socket.emit('message', {
-            matchers: matches
-          });
+          if (socket !== null) {
+            socket.emit('message', {
+              matchers: matches
+            });
+          }
         }
       })
       .on('end', function () {
