@@ -46,7 +46,7 @@ class WatcherComponent extends React.Component {
     this.socket.on('message', (message) => {
       if (message && this.state.watcher.matchers) {
         let wsMatchers = message.matchers;
-        let newMatcherState = this.state.watcher.matchers.map(function (curr) {
+        let newMatcherState = this.state.watcher.matchers.map((curr) => {
           let original = curr;
           let fromWs = wsMatchers.find(function (m) {
             return m.name === curr.name;
@@ -55,6 +55,11 @@ class WatcherComponent extends React.Component {
             original.count = original.count + fromWs.count;
           }
           return original;
+        });
+        let watcher = this.state.watcher;
+        watcher.matchers = newMatcherState;
+        this.setState({
+          watcher
         });
       }
     });
@@ -181,7 +186,7 @@ class WatcherComponent extends React.Component {
         </Row>
         <Row>
           <Col md={12} lg={12} xs={12}>
-            <Timeline/>
+            <Timeline matchers={watcher.matchers}/>
           </Col>
         </Row>
       </div>
