@@ -17,6 +17,7 @@ import log4js from 'log4js';
 import schema from './schema';
 import bodyParser from 'body-parser';
 
+import SocketIOFactory from './util/socketio';
 import api from './api';
 import webpack from 'webpack';
 import webpackConfig from '../webpack.config';
@@ -125,11 +126,10 @@ app.set('view engine', 'ejs');
 api(app);
 
 // socket.io setup
-let watcherFactory = new SocketIO(server);
+SocketIOFactory.initialize(server);
 
 server.listen(config.port);
 server.on('listening', () => {
   logger.instance.info('vrbose is running on port', config.port);
-  // fix this awful injection
-  watchertest(watcherFactory);
+  watchertest();
 });
