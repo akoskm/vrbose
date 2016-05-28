@@ -31,7 +31,7 @@ class Timeline extends React.Component {
   }
 
   rand(min, max) {
-    return ((Math.random() * (max - min)) + min);
+    return Math.floor((Math.random() * (max - min)) + min);
   }
 
   resume() {
@@ -46,8 +46,8 @@ class Timeline extends React.Component {
       }
       let oldData = this.state.data;
       let oldData2 = this.state.data2;
-      oldData.push(this.rand(3, 5));
-      oldData2.push(this.rand(2, 6));
+      oldData.push(this.rand(1, 5));
+      oldData2.push(this.rand(1, 5));
       if (oldData.length > 9) {
         oldData.shift();
       }
@@ -59,7 +59,7 @@ class Timeline extends React.Component {
         data: oldData,
         data2: oldData2
       });
-    }, 1000);
+    }, 5000);
   }
 
   toggleResume() {
@@ -75,7 +75,6 @@ class Timeline extends React.Component {
   }
 
   render() {
-    let self = this;
     let buttonText = this.state.running ? 'Pause' : 'Resume';
     if (this.state.running) {
       this.resume();
