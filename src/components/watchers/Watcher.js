@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
-import Table from 'react-bootstrap/lib/Table';
 import Row from 'react-bootstrap/lib/Row';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -12,6 +11,7 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import request from 'superagent';
 import io from 'socket.io-client';
 import Timeline from './Timeline';
+import Summary from './Summary';
 
 class WatcherComponent extends React.Component {
 
@@ -41,7 +41,7 @@ class WatcherComponent extends React.Component {
 
     this.socket = io('/ws/watchers/' + watcherId);
     this.socket.on('connect', function () {
-      console.log('connected');
+      console.log('connected to watcher socket');
     });
     this.socket.on('message', (message) => {
       if (message && this.state.watcher.matchers) {
@@ -90,34 +90,8 @@ class WatcherComponent extends React.Component {
   render() {
     let watcher = this.state.watcher;
     let buttonText = 'Create';
-    let matchersTable = (<Col xs={12} md={6} lg={6}/>);
     if (watcher._id) {
       buttonText = 'Save';
-    }
-    if (watcher.matchers && watcher.matchers.length > 0) {
-      matchersTable = (<Col xs={12} md={6} lg={6}>
-        <h4>Watchers</h4>
-        <Table responsive>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Regex</th>
-              <th>Count</th>
-            </tr>
-          </thead>
-          <tbody>
-          {watcher.matchers.map(function (m) {
-            return (
-              <tr>
-                <td>{m.name}</td>
-                <td>{m.regex}</td>
-                <td>{m.count}</td>
-              </tr>
-            );
-          })}
-          </tbody>
-        </Table>
-      </Col>);
     }
     return (
       <div>
@@ -182,7 +156,7 @@ class WatcherComponent extends React.Component {
               </FormGroup>
             </Form>
           </Col>
-          {matchersTable}
+          <Summary matchers={watcher.matchers}/>
         </Row>
         <Row>
           <Col md={12} lg={12} xs={12}>
