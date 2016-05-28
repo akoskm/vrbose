@@ -29,16 +29,20 @@ const watcherApi = {
     const workflow = workflowFactory(req, res);
 
     workflow.on('findWatcher', function () {
-      mongoose.model('Watcher').findById(req.params.id, function (err, doc) {
-        if (err) {
-          logger.instance.error('Error while fetching watchers', err);
-          workflow.outcome.errors.push('Cannot fetch watchers');
-          return workflow.emit('response');
-        }
+      mongoose.model('Watcher')
+        .findById(req.params.id)
+        .populate('matchers.history')
+        .slice('matchers.history', [0, 10])
+        .exec(function (err, doc) {
+          if (err) {
+            logger.instance.error('Error while fetching watchers', err);
+            workflow.outcome.errors.push('Cannot fetch watchers');
+            return workflow.emit('response');
+          }
 
-        workflow.outcome.result = doc;
-        return workflow.emit('response');
-      });
+          workflow.outcome.result = doc;
+          return workflow.emit('response');
+        });
     });
 
     workflow.emit('findWatcher');
