@@ -11,6 +11,18 @@ const LineChart = require('react-chartjs').Bar;
 
 const Timeline = (props) => {
 
+  const primaryColors = [
+    'rgba(194, 118, 218, 1)',
+    'rgba(209, 154, 102, 1)',
+    'rgba(167, 91, 102, 1)'
+  ];
+
+  const secondaryColors = [
+    'rgba(194, 118, 218, 0.2)',
+    'rgba(209, 154, 102, 0.2)',
+    'rgba(167, 91, 102, 0.2)'
+  ];
+
   // make these configurable
   const resolution = 30;
   const iterations = 10;
@@ -36,7 +48,6 @@ const Timeline = (props) => {
         if (last) {
           startTime = moment(currentTime);
           for (let i = 0; i < iterations; i++) {
-            // labels.unshift(startTime.format('HH:mm:ss'));
             oldTime = moment(startTime);
             startTime.subtract(resolution, 'm');
             labelsText[j].unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
@@ -57,27 +68,32 @@ const Timeline = (props) => {
       maintainAspectRatio: true
     };
 
+    let chartData = labelsText.map(function (labels, i) {
+      return {
+        labels,
+        datasets: [{
+          label: 'My First dataset',
+          fillColor: secondaryColors[i],
+          strokeColor: primaryColors[i],
+          pointColor: primaryColors[i],
+          pointStrokeColor: '#fff',
+          pointHighlightFill: '#fff',
+          pointHighlightStroke: 'rgba(220,220,220,1)',
+          data: dataSet[i]
+        }]
+      };
+    });
+
     return (
       <div>
         <Row>
-          <Col md={12} xs={12} lg={12}>
-            {labelsText.map(function (labels, i) {
-              let data = {
-                labels,
-                datasets: [{
-                  label: 'My First dataset',
-                  fillColor: 'rgba(220,220,220,0.2)',
-                  strokeColor: 'rgba(220,220,220,1)',
-                  pointColor: 'rgba(220,220,220,1)',
-                  pointStrokeColor: '#fff',
-                  pointHighlightFill: '#fff',
-                  pointHighlightStroke: 'rgba(220,220,220,1)',
-                  data: dataSet[i]
-                }]
-              };
-              return (<LineChart data={data} options={options} width='600' height='250'/>);
-            })}
-          </Col>
+          {chartData.map(function (data, i) {
+            return (
+              <Col md={6} xs={6} lg={6}>
+                <LineChart data={data} options={options}/>
+              </Col>
+            );
+          })}
         </Row>
       </div>
     );
