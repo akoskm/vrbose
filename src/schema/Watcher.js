@@ -14,7 +14,8 @@ let watcherSchema = new mongoose.Schema({
     regex: { type: String, required: true },
     count: { type: Number, required: true, default: 0 },
     createdOn: { type: Date, required: true, default: Date.now },
-    lastMatch: { type: Date }
+    lastMatch: { type: Date },
+    history: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MatcherHistory' }]
   }],
   createdOn: { type: Date, required: true, default: Date.now },
   createdBy: { type: String, required: true, default: 'unknown' },

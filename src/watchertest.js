@@ -18,7 +18,7 @@ export default() => {
   //   }]
   // };
 
-  let appendListener = function (matches, endPos, id, matchers) {
+  let appendListener = function (matches, endPos, id) {
     if (matches) {
       let updateMatchers = matches.map(function (mr) {
         return {
@@ -32,15 +32,28 @@ export default() => {
               'matchers.$.count': mr.count
             },
             $set: {
-              endPos
+              endPos,
+              'matchers.$.lastMatch': Date.now()
             }
           }
         };
       });
       updateMatchers.forEach(function (um) {
-        mongoose.model('Watcher').update(um.query, um.update, function (err, doc) {
-          if (err) throw err;
-        });
+        let total = um.update.$inc.total;
+        if (total > 0) {
+          let matcherHistory = {
+            total
+          };
+          mongoose.model('MatcherHistory').create(matcherHistory, function (err, history) {
+            if (err) throw err;
+            um.update.$push = {
+              'matchers.$.history': history
+            };
+            mongoose.model('Watcher').update(um.query, um.update, function (err, watcher) {
+              if (err) throw err;
+            });
+          });
+        }
       });
     }
   };
