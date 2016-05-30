@@ -49,7 +49,7 @@ const Timeline = (props) => {
           startTime = moment(currentTime);
           for (let i = 0; i < iterations; i++) {
             oldTime = moment(startTime);
-            startTime.subtract(resolution, 'm');
+            startTime.subtract(resolution, 'm').startOf('hour');
             labelsText[j].unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
 
             let between = matcher.history.filter(isBetween);
