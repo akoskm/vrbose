@@ -76,47 +76,6 @@ const watcherApi = {
     workflow.emit('findWatcher');
   },
 
-  getHistory(req, res, next) {
-    const workflow = workflowFactory(req, res);
-    const start = moment().startOf('day');
-
-    workflow.on('findWatcher', function () {
-      mongoose.model('Watcher')
-        .findById(req.params.id)
-        .select('matchers')
-        .exec(function (err, doc) {
-          if (err) throw err;
-          if (doc) {
-            let matchers = doc.matchers;
-            if (matchers && matchers.length > 0) {
-              workflow.matchers = matchers;
-              return workflow.emit('findMatcherHistory');
-            }
-          } else {
-            workflow.emit('response');
-          }
-        });
-    });
-
-    workflow.on('findMatcherHistory', function () {
-      mongoose.model('MatcherHistory')
-        .find({
-          matcher: { $in: workflow.matchers },
-          createdOn: { $gt: start }
-        })
-        .count(function (err, doc) {
-          if (err) throw err;
-          workflow.outcome.result = [{
-            date: start.format('YYYY-MM-DD'),
-            count: doc
-          }];
-          workflow.emit('response');
-        });
-    });
-
-    workflow.emit('findWatcher');
-  },
-
   activity(req, res, next) {
     const workflow = workflowFactory(req, res);
 
