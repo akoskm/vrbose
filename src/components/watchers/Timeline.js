@@ -44,7 +44,6 @@ class Timeline extends React.Component {
       let history = res.result;
       if (res.success) {
         if (!history) history = [];
-        // Array.prototype.push.apply(history, this.props.history);
         this.setState({
           history: res.result,
           forDay
@@ -127,9 +126,6 @@ class Timeline extends React.Component {
         <LineChart data={data} options={options}/>
       </div>
     );
-    // } else {
-    //   return <div>no data</div>;
-    // }
   }
 
 }

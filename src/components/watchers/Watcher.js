@@ -107,7 +107,7 @@ class WatcherComponent extends React.Component {
     if (watcher.matchers && watcher.matchers.length > 0) {
       timelines = watcher.matchers.map((m, i) => {
         return (
-          <Col md={6} lg={6} xs={6}>
+          <Col md={12} lg={6} xs={12}>
             <h4>{m.name}</h4>
             <Timeline
               forDay={this.state.forDay}
