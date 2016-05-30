@@ -6,7 +6,7 @@ import SocketIOFactory from './util/socketio';
 
 import { logger } from './util/logger';
 
-let id;
+let _id;
 let matchers;
 let filename;
 let delimiter;
@@ -18,6 +18,7 @@ let extractMatches = function (input) {
   let matches = matchers.map(function (m) {
     let result = input.match(m.regex);
     return {
+      _id: m._id,
       name: m.name,
       regex: m.regex,
       count: result ? result.length : 0
@@ -62,7 +63,7 @@ const AppendWatcher = function (watcher) {
   filename = watcher.filename;
   delimiter = watcher.delimiter;
   startPos = watcher.endPos;
-  id = watcher.id;
+  _id = watcher._id;
   matchers = watcher.matchers;
 
   let self = this;
@@ -91,7 +92,7 @@ const AppendWatcher = function (watcher) {
           let input = buffer.substr(0, boundary);
           let matches = extractMatches(input);
           buffer = buffer.substr(boundary + 1);
-          self.emit('append', matches, endPos, id, socket);
+          self.emit('append', matches, endPos, _id, socket);
           boundary = buffer.indexOf(delimiter);
         }
       })

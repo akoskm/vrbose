@@ -6,6 +6,10 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 class Heatmap extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      values: []
+    };
   }
 
   componentDidMount() {
@@ -14,7 +18,7 @@ class Heatmap extends React.Component {
       let res = response.body;
       if (res.success) {
         this.setState({
-          watcher: res.result
+          values: res.result
         });
       }
     });
@@ -25,29 +29,39 @@ class Heatmap extends React.Component {
     this.socket.disconnect();
   }
 
+  classForValue(value) {
+    if (!value || value.count < 0) {
+      return 'color-empty';
+    }
+    return `color-scale-${value.count > 4 ? 4 : value.count}`;
+  }
+
+  generateTitle(value) {
+    if (!value) {
+      return 0;
+    }
+    return value.count;
+  }
+
   render() {
     let now = moment();
     let numberOfDays = moment().isLeapYear() ? 366 : 365;
-    let values = [
-      { date: '2016-01-01' },
-      { date: '2016-01-22' },
-      { date: '2016-01-30' },
-      { date: '2016-01-01', count: 1 },
-      { date: '2016-01-03', count: 4 },
-      { date: '2016-01-06', count: 2 }
-    ];
+    let values = this.state.values;
     return (
       <CalendarHeatmap
         endDate={now}
         numDays={numberOfDays}
         values={values}
+        classForValue={this.classForValue}
+        onClick={this.props.filterDay}
       />
     );
   }
 }
 
 Heatmap.propTypes = {
-  watcherId: React.PropTypes.object.isRequired
+  watcherId: React.PropTypes.object.isRequired,
+  filterDay: React.PropTypes.object.isRequired
 };
 
 export default Heatmap;

@@ -10,9 +10,9 @@ import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import request from 'superagent';
 import io from 'socket.io-client';
-import Timeline from './Timeline';
 import Summary from './Summary';
 import Heatmap from './Heatmap';
+import MatcherTimeline from './MatcherTimeline';
 
 class WatcherComponent extends React.Component {
 
@@ -25,6 +25,7 @@ class WatcherComponent extends React.Component {
       }
     };
 
+    this.filterDay = this.filterDay.bind(this);
     this.saveWatcher = this.saveWatcher.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.updateWatcher = this.updateWatcher.bind(this);
@@ -86,13 +87,37 @@ class WatcherComponent extends React.Component {
     });
   }
 
+  filterDay(value) {
+    if (value) {
+      this.setState({
+        forDay: value.date
+      });
+    }
+  }
+
   render() {
     let watcher = this.state.watcher;
     let buttonText = 'Create';
     let heatmap = (<p>Loading</p>);
     if (watcher._id) {
       buttonText = 'Save';
-      heatmap = (<Heatmap watcherId={watcher._id}/>);
+      heatmap = (<Heatmap watcherId={watcher._id} filterDay={this.filterDay}/>);
+    }
+    let matcherTimelines = <p>No data.</p>;
+    if (watcher.matchers && watcher.matchers.length > 0) {
+      matcherTimelines = watcher.matchers.map((m, i) => {
+        return (
+          <Col md={6} lg={6} xs={6}>
+            <h4>{m.name}</h4>
+            <MatcherTimeline
+              forDay={this.state.forDay}
+              watcherId={watcher._id}
+              matcherId={m._id}
+              index={i}
+            />
+          </Col>
+        );
+      });
     }
     return (
       <div>
@@ -160,9 +185,7 @@ class WatcherComponent extends React.Component {
           <Summary matchers={watcher.matchers}/>
         </Row>
         <Row>
-          <Col md={12} lg={12} xs={12}>
-            <Timeline matchers={watcher.matchers}/>
-          </Col>
+          {matcherTimelines}
         </Row>
         <Row>
           {heatmap}

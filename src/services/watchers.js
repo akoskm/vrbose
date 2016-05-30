@@ -50,20 +50,72 @@ const watcherApi = {
     workflow.emit('findWatcher');
   },
 
+  getMatcherHistory(req, res, next) {
+    const workflow = workflowFactory(req, res);
+
+    workflow.on('findMatcher', function () {
+      let query = {
+        matcher: req.params.matcherId
+      };
+
+      if (req.query.d && moment(req.query.d, 'YYYY-MM-DD')) {
+        let startOfDay = moment(req.query.d).startOf('day');
+        let endOfDay = moment(req.query.d).endOf('day');
+        console.log(startOfDay, endOfDay);
+        query.createdOn = {
+          $gte: startOfDay,
+          $lt: endOfDay
+        };
+      }
+
+      mongoose.model('MatcherHistory')
+        .find(query)
+        .sort({ createdOn: 1 })
+        .limit(50)
+        .exec(function (err, doc) {
+          if (err) throw err;
+          if (doc) workflow.outcome.result = doc;
+          workflow.emit('response');
+        });
+    });
+
+    workflow.emit('findMatcher');
+  },
+
   getHistory(req, res, next) {
     const workflow = workflowFactory(req, res);
-    const start = moment().startOf('year');
+    const start = moment().startOf('day');
 
     workflow.on('findWatcher', function () {
       mongoose.model('Watcher')
         .findById(req.params.id)
-        .populate({
-          path: 'matchers.history',
-          match: { 'matchers.history.total': { $gte: 0 } }
-        })
+        .select('matchers')
         .exec(function (err, doc) {
           if (err) throw err;
-          workflow.outcome.result = doc.matchers;
+          if (doc) {
+            let matchers = doc.matchers;
+            if (matchers && matchers.length > 0) {
+              workflow.matchers = matchers;
+              return workflow.emit('findMatcherHistory');
+            }
+          } else {
+            workflow.emit('response');
+          }
+        });
+    });
+
+    workflow.on('findMatcherHistory', function () {
+      mongoose.model('MatcherHistory')
+        .find({
+          matcher: { $in: workflow.matchers },
+          createdOn: { $gt: start }
+        })
+        .count(function (err, doc) {
+          if (err) throw err;
+          workflow.outcome.result = [{
+            date: start.format('YYYY-MM-DD'),
+            count: doc
+          }];
           workflow.emit('response');
         });
     });

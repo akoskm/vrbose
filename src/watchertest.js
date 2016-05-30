@@ -18,12 +18,13 @@ export default() => {
   //   }]
   // };
 
-  let appendListener = function (matches, endPos, id, socket) {
+  let appendListener = function (matches, endPos, _id, socket) {
     if (matches) {
       let updateMatchers = matches.map(function (mr) {
         return {
           query: {
-            id,
+            _id,
+            'matchers._id': mr._id,
             'matchers.name': mr.name
           },
           update: {
@@ -40,15 +41,14 @@ export default() => {
       });
       updateMatchers.forEach(function (um) {
         let total = um.update.$inc.total;
+        let matcherId = um.query['matchers._id'];
         if (total > 0) {
           let matcherHistory = {
+            matcher: matcherId,
             total
           };
           mongoose.model('MatcherHistory').create(matcherHistory, function (err, history) {
             if (err) throw err;
-            um.update.$push = {
-              'matchers.$.history': history
-            };
             if (socket !== null) {
               socket.emit('message', {
                 name: um.query['matchers.name'],
