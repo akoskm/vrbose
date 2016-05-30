@@ -12,6 +12,7 @@ import request from 'superagent';
 import io from 'socket.io-client';
 import Timeline from './Timeline';
 import Summary from './Summary';
+import Heatmap from './Heatmap';
 
 class WatcherComponent extends React.Component {
 
@@ -88,8 +89,10 @@ class WatcherComponent extends React.Component {
   render() {
     let watcher = this.state.watcher;
     let buttonText = 'Create';
+    let heatmap = (<p>Loading</p>);
     if (watcher._id) {
       buttonText = 'Save';
+      heatmap = (<Heatmap watcherId={watcher._id}/>);
     }
     return (
       <div>
@@ -160,6 +163,9 @@ class WatcherComponent extends React.Component {
           <Col md={12} lg={12} xs={12}>
             <Timeline matchers={watcher.matchers}/>
           </Col>
+        </Row>
+        <Row>
+          {heatmap}
         </Row>
       </div>
     );
