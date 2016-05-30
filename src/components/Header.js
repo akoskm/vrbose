@@ -82,7 +82,7 @@ class HeaderComponent extends React.Component {
       );
     }
     return (
-      <Navbar inverse>
+      <Navbar inverse className='navbar-static-top'>
         <Navbar.Header>
           <Navbar.Brand>
             <a onClick={this.goToLanding}>vrbose</a>
