@@ -53,7 +53,6 @@ const Timeline = (props) => {
             labelsText[j].unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
 
             let between = matcher.history.filter(isBetween);
-            console.log(between);
             let total = between.reduce(function (prev, curr) {
               return prev + curr.total;
             }, 0);

@@ -18,7 +18,7 @@ export default() => {
   //   }]
   // };
 
-  let appendListener = function (matches, endPos, id) {
+  let appendListener = function (matches, endPos, id, socket) {
     if (matches) {
       let updateMatchers = matches.map(function (mr) {
         return {
@@ -49,6 +49,12 @@ export default() => {
             um.update.$push = {
               'matchers.$.history': history
             };
+            if (socket !== null) {
+              socket.emit('message', {
+                name: um.query['matchers.name'],
+                history
+              });
+            }
             mongoose.model('Watcher').update(um.query, um.update, function (err, watcher) {
               if (err) throw err;
             });

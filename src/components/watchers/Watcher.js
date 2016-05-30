@@ -26,48 +26,46 @@ class WatcherComponent extends React.Component {
 
     this.saveWatcher = this.saveWatcher.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.updateWatcher = this.updateWatcher.bind(this);
   }
 
   componentDidMount() {
     let watcherId = this.props.routeParams.id;
-    this.watcherRequest = request.get('/api/watchers/' + watcherId).end(function (err, response) {
+    this.watcherRequest = request.get('/api/watchers/' + watcherId).end((err, response) => {
       let res = response.body;
       if (res.success) {
         this.setState({
           watcher: res.result
         });
       }
-    }.bind(this));
+    });
 
     this.socket = io('/ws/watchers/' + watcherId);
     this.socket.on('connect', function () {
       console.log('connected to watcher socket');
     });
-    this.socket.on('message', (message) => {
-      if (message && this.state.watcher.matchers) {
-        let wsMatchers = message.matchers;
-        let newMatcherState = this.state.watcher.matchers.map((curr) => {
-          let original = curr;
-          let fromWs = wsMatchers.find(function (m) {
-            return m.name === curr.name;
-          });
-          if (fromWs) {
-            original.count = original.count + fromWs.count;
-          }
-          return original;
-        });
-        let watcher = this.state.watcher;
-        watcher.matchers = newMatcherState;
-        this.setState({
-          watcher
-        });
-      }
-    });
+    this.socket.on('message', this.updateWatcher);
   }
 
   componentWillUnmount() {
     this.watcherRequest.abort();
     this.socket.disconnect();
+  }
+
+  updateWatcher(message) {
+    if (message && this.state.watcher.matchers) {
+      // let wsMatchers = message.matchers;
+      let matcher = this.state.watcher.matchers.find((curr, i) => {
+        return message.name === curr.name;
+      });
+      if (matcher) {
+        matcher.count = matcher.count + message.history.total;
+        matcher.history.push(message.history);
+        this.setState({
+          watcher: this.state.watcher
+        });
+      }
+    }
   }
 
   saveWatcher() {
