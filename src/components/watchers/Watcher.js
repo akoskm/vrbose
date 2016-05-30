@@ -26,23 +26,16 @@ class WatcherComponent extends React.Component {
     };
 
     this.filterDay = this.filterDay.bind(this);
+    this.getWatcher = this.getWatcher.bind(this);
     this.saveWatcher = this.saveWatcher.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.updateWatcher = this.updateWatcher.bind(this);
   }
 
   componentDidMount() {
-    let watcherId = this.props.routeParams.id;
-    this.watcherRequest = request.get('/api/watchers/' + watcherId).end((err, response) => {
-      let res = response.body;
-      if (res.success) {
-        this.setState({
-          watcher: res.result
-        });
-      }
-    });
+    this.getWatcher();
 
-    this.socket = io('/ws/watchers/' + watcherId);
+    this.socket = io('/ws/watchers/' + this.props.routeParams.id);
     this.socket.on('connect', function () {
       console.log('connected to watcher socket');
     });
@@ -52,6 +45,21 @@ class WatcherComponent extends React.Component {
   componentWillUnmount() {
     this.watcherRequest.abort();
     this.socket.disconnect();
+  }
+
+  getWatcher(forDay) {
+    let url = '/api/watchers/' + this.props.routeParams.id;
+    if (forDay) {
+      url = url + '?d=' + forDay;
+    }
+    this.watcherRequest = request.get(url).end((err, response) => {
+      let res = response.body;
+      if (res.success) {
+        this.setState({
+          watcher: res.result
+        });
+      }
+    });
   }
 
   updateWatcher(message) {
@@ -89,9 +97,7 @@ class WatcherComponent extends React.Component {
 
   filterDay(value) {
     if (value) {
-      this.setState({
-        forDay: value.date
-      });
+      this.getWatcher(value.date);
     }
   }
 
@@ -110,9 +116,6 @@ class WatcherComponent extends React.Component {
           <Col md={12} lg={6} xs={12}>
             <h4>{m.name}</h4>
             <Timeline
-              forDay={this.state.forDay}
-              watcherId={watcher._id}
-              matcherId={m._id}
               history={m.history}
               index={i}
             />

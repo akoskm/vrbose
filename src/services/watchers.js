@@ -28,58 +28,52 @@ const watcherApi = {
 
   find(req, res, next) {
     const workflow = workflowFactory(req, res);
+    let startOfDay = moment().subtract(1, 'days');
+    let endOfDay = moment();
+
+    if (req.query.d && moment(req.query.d, 'YYYY-MM-DD')) {
+      startOfDay = moment(req.query.d).startOf('day');
+      endOfDay = moment(req.query.d).endOf('day');
+    }
 
     workflow.on('findWatcher', function () {
       mongoose.model('Watcher')
-        .findById(req.params.id)
-        .populate('matchers.history')
-        .sort({ 'matchers.history': 1 })
-        .slice('matchers.history', [0, 50])
-        .exec(function (err, doc) {
-          if (err) {
-            logger.instance.error('Error while fetching watchers', err);
-            workflow.outcome.errors.push('Cannot fetch watchers');
+        .findById(req.params.id, function (err, watcher) {
+          let matchers = watcher.matchers;
+          if (matchers && matchers.length > 0) {
+            mongoose.model('MatcherHistory').find({
+              matcher: { $in : matchers },
+              createdOn: { $gte: startOfDay, $lt: endOfDay }
+            }).sort({ createdOn: 1 }).exec(function (err, history) {
+              if (err) {
+                logger.instance.error('Error while fetching watchers', err);
+                workflow.outcome.errors.push('Cannot fetch watchers');
+                return workflow.emit('response');
+              }
+
+              let result = watcher.toJSON();
+              if (history && history.length > 0) {
+                let matcherWithHistory = matchers.map(function (m) {
+                  let withHistory = m.toJSON();
+                  withHistory.history = history.filter(function (h) {
+                    return m._id.equals(h.matcher);
+                  });
+                  return withHistory;
+                });
+                result.matchers = matcherWithHistory;
+              }
+
+              workflow.outcome.result = result;
+              return workflow.emit('response');
+            });
+          } else {
+            workflow.outcome.result = watcher;
             return workflow.emit('response');
           }
-
-          workflow.outcome.result = doc;
-          return workflow.emit('response');
         });
     });
 
     workflow.emit('findWatcher');
-  },
-
-  getMatcherHistory(req, res, next) {
-    const workflow = workflowFactory(req, res);
-
-    workflow.on('findMatcher', function () {
-      let query = {
-        matcher: req.params.matcherId
-      };
-
-      if (req.query.d && moment(req.query.d, 'YYYY-MM-DD')) {
-        let startOfDay = moment(req.query.d).startOf('day');
-        let endOfDay = moment(req.query.d).endOf('day');
-        console.log(startOfDay, endOfDay);
-        query.createdOn = {
-          $gte: startOfDay,
-          $lt: endOfDay
-        };
-      }
-
-      mongoose.model('MatcherHistory')
-        .find(query)
-        .sort({ createdOn: 1 })
-        .limit(50)
-        .exec(function (err, doc) {
-          if (err) throw err;
-          if (doc) workflow.outcome.result = doc;
-          workflow.emit('response');
-        });
-    });
-
-    workflow.emit('findMatcher');
   },
 
   getHistory(req, res, next) {
