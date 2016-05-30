@@ -30,7 +30,6 @@ class Heatmap extends React.Component {
 
   componentWillUnmount() {
     this.watcherRequest.abort();
-    this.socket.disconnect();
   }
 
   classForValue(value) {

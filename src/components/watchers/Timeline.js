@@ -67,11 +67,12 @@ class Timeline extends React.Component {
     ];
 
     // make these configurable
-    const resolution = 30;
-    const iterations = 10;
+    let resolution = 59;
+    const iterations = 12;
 
     let dataSet = [];
     let labelsText = [];
+    let daysPast = 0;
 
     let oldTime;
     let startTime = moment();
@@ -83,49 +84,52 @@ class Timeline extends React.Component {
 
     let history = this.state.history;
     if (history && history.length > 0) {
-      let last = history[history.length - 1];
-      if (last) {
-        startTime = moment(currentTime);
-        for (let i = 0; i < iterations; i++) {
-          oldTime = moment(startTime);
-          startTime.subtract(resolution, 'm').startOf('hour');
-          labelsText.unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
-
-          let between = history.filter(isBetween);
-          let total = between.reduce(function (prev, curr) {
-            return prev + curr.total;
-          }, 0);
-          dataSet.unshift(total);
-        }
+      let lastDate = moment(history[history.length - 1].createdOn);
+      daysPast = startTime.diff(lastDate, 'days');
+      if (daysPast > 0) {
+        startTime.subtract(daysPast, 'days').endOf('day');
+        resolution = 118;
       }
-
-      let options = {
-        responsive: true,
-        maintainAspectRatio: true
-      };
-
-      let data = {
-        labels: labelsText,
-        datasets: [{
-          label: 'My First dataset',
-          fillColor: secondaryColors[this.props.index],
-          strokeColor: primaryColors[this.props.index],
-          pointColor: primaryColors[this.props.index],
-          pointStrokeColor: '#fff',
-          pointHighlightFill: '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data: dataSet
-        }]
-      };
-
-      return (
-        <div>
-          <LineChart data={data} options={options}/>
-        </div>
-      );
-    } else {
-      return <div>no data</div>;
     }
+    for (let i = 0; i < iterations; i++) {
+      oldTime = moment(startTime);
+      startTime.subtract(resolution, 'm').startOf('hour');
+      labelsText.unshift(startTime.format('HH:mm') + ' - ' + oldTime.format('HH:mm'));
+
+      let between = history.filter(isBetween);
+      let total = between.reduce(function (prev, curr) {
+        return prev + curr.total;
+      }, 0);
+      dataSet.unshift(total);
+    }
+
+    let options = {
+      responsive: true,
+      maintainAspectRatio: true
+    };
+
+    let data = {
+      labels: labelsText,
+      datasets: [{
+        label: 'My First dataset',
+        fillColor: secondaryColors[this.props.index],
+        strokeColor: primaryColors[this.props.index],
+        pointColor: primaryColors[this.props.index],
+        pointStrokeColor: '#fff',
+        pointHighlightFill: '#fff',
+        pointHighlightStroke: 'rgba(220,220,220,1)',
+        data: dataSet
+      }]
+    };
+
+    return (
+      <div>
+        <LineChart data={data} options={options}/>
+      </div>
+    );
+    // } else {
+    //   return <div>no data</div>;
+    // }
   }
 
 }
