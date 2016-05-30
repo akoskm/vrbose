@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/lib/Col';
 import Row from 'react-bootstrap/lib/Row';
 const LineChart = require('react-chartjs').Bar;
 
-class MatcherTimeline extends React.Component {
+class Timeline extends React.Component {
 
   constructor(props) {
     super(props);
@@ -128,11 +128,11 @@ class MatcherTimeline extends React.Component {
 
 }
 
-MatcherTimeline.propTypes = {
+Timeline.propTypes = {
   watcherId: React.PropTypes.object.isRequired,
   matcherId: React.PropTypes.object.isRequired,
   forDay: React.PropTypes.object.isRequired,
   index: React.PropTypes.object.isRequired
 };
 
-export default MatcherTimeline;
+export default Timeline;

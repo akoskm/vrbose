@@ -12,7 +12,7 @@ import request from 'superagent';
 import io from 'socket.io-client';
 import Summary from './Summary';
 import Heatmap from './Heatmap';
-import MatcherTimeline from './MatcherTimeline';
+import Timeline from './Timeline';
 
 class WatcherComponent extends React.Component {
 
@@ -103,13 +103,13 @@ class WatcherComponent extends React.Component {
       buttonText = 'Save';
       heatmap = (<Heatmap watcherId={watcher._id} filterDay={this.filterDay}/>);
     }
-    let matcherTimelines = <p>No data.</p>;
+    let timelines = <p>No data.</p>;
     if (watcher.matchers && watcher.matchers.length > 0) {
-      matcherTimelines = watcher.matchers.map((m, i) => {
+      timelines = watcher.matchers.map((m, i) => {
         return (
           <Col md={6} lg={6} xs={6}>
             <h4>{m.name}</h4>
-            <MatcherTimeline
+            <Timeline
               forDay={this.state.forDay}
               watcherId={watcher._id}
               matcherId={m._id}
@@ -185,7 +185,7 @@ class WatcherComponent extends React.Component {
           <Summary matchers={watcher.matchers}/>
         </Row>
         <Row>
-          {matcherTimelines}
+          {timelines}
         </Row>
         <Row>
           {heatmap}

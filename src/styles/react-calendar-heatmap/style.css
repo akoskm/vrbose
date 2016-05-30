@@ -18,7 +18,7 @@
  */
 
 .react-calendar-heatmap .color-empty {
-  fill: #eeeeee;
+  fill: #4C4C4C;
 }
 
 .react-calendar-heatmap .color-filled {
@@ -30,17 +30,17 @@
  */
 
 .react-calendar-heatmap .color-scale-0 {
-  fill: #eeeeee;
+  fill: #4C4C4C;
 }
 .react-calendar-heatmap .color-scale-1 {
-  fill: #d6e685;
+  fill: #757575
 }
 .react-calendar-heatmap .color-scale-2 {
-  fill: #8cc665;
+  fill: #616161
 }
 .react-calendar-heatmap .color-scale-3 {
-  fill: #44a340;
+  fill: #424242
 }
 .react-calendar-heatmap .color-scale-4 {
-  fill: #1e6823;
+  fill: #212121
 }
