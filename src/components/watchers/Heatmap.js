@@ -8,7 +8,8 @@ class Heatmap extends React.Component {
     super(props);
 
     this.state = {
-      activites: []
+      activites: [],
+      maxScale: 4
     };
 
     this.classForValue = this.classForValue.bind(this);
@@ -22,7 +23,7 @@ class Heatmap extends React.Component {
         this.setState({
           activites: res.result.activites,
           max: res.result.max,
-          step: Math.floor(res.result.max / 4)
+          step: Math.floor(res.result.max / this.state.maxScale)
         });
       }
     });
@@ -36,8 +37,8 @@ class Heatmap extends React.Component {
     if (!value || value.total < 0) {
       return 'color-empty';
     }
-    let scale = Math.floor(value.total / this.state.step);
-    return `color-scale-${scale > 4 ? 4 : scale}`;
+    let scale = Math.floor(value.total / this.state.step) + 1;
+    return `color-scale-${scale > this.state.maxScale ? this.state.maxScale : scale}`;
   }
 
   generateTitle(value) {
