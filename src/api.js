@@ -18,6 +18,7 @@ export default (app, upload) => {
   app.get('/api/watchers/:id', watcherApi.find);
   app.get('/api/watchers/:id/history', watcherApi.getHistory);
   app.get('/api/watchers/:id/matchers/:matcherId', watcherApi.getMatcherHistory);
+  app.get('/api/watchers/:id/activity', watcherApi.activity);
 
   /* main router for reactjs components, supporting both client and server side rendering*/
   let sendHtml = function (res, props, context) {

@@ -23,14 +23,13 @@ class Timeline extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps && newProps.forDay) {
+    if (newProps && (newProps.forDay || newProps.history)) {
       this.loadTimeline(newProps.forDay);
     }
   }
 
   componentWillUnmount() {
     this.watcherRequest.abort();
-    this.socket.disconnect();
   }
 
   loadTimeline(forDay) {
@@ -42,7 +41,10 @@ class Timeline extends React.Component {
     }
     this.watcherRequest = request.get(historyURL).end((err, response) => {
       let res = response.body;
+      let history = res.result;
       if (res.success) {
+        if (!history) history = [];
+        // Array.prototype.push.apply(history, this.props.history);
         this.setState({
           history: res.result,
           forDay
@@ -132,6 +134,7 @@ Timeline.propTypes = {
   watcherId: React.PropTypes.object.isRequired,
   matcherId: React.PropTypes.object.isRequired,
   forDay: React.PropTypes.object.isRequired,
+  history: React.PropTypes.object.isRequired,
   index: React.PropTypes.object.isRequired
 };
 

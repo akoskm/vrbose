@@ -121,6 +121,41 @@ const watcherApi = {
     });
 
     workflow.emit('findWatcher');
+  },
+
+  activity(req, res, next) {
+    const workflow = workflowFactory(req, res);
+
+    workflow.on('findActivities', function () {
+      mongoose.model('MatcherHistory').aggregate({
+        $group: {
+          _id: {
+            day: { $dayOfYear: '$createdOn' },
+            date: { $dateToString: { format: '%Y-%m-%d', date: '$createdOn' } }
+          },
+          total: { $sum: '$total' }
+        }
+      }, function (err, docs) {
+        if (err) throw err;
+        let result = {
+          activites: [],
+          max: 0
+        };
+        if (docs && docs.length > 0) {
+          result.activites = docs.map(function (d) {
+            if (d.total > result.max) result.max = d.total;
+            return {
+              date: d._id.date,
+              total: d.total
+            };
+          });
+        }
+        workflow.outcome.result = result;
+        workflow.emit('response');
+      });
+    });
+
+    workflow.emit('findActivities');
   }
 };
 

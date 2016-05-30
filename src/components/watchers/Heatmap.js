@@ -8,17 +8,20 @@ class Heatmap extends React.Component {
     super(props);
 
     this.state = {
-      values: []
+      activites: []
     };
+
+    this.classForValue = this.classForValue.bind(this);
   }
 
   componentDidMount() {
-    let historyUrl = '/api/watchers/' + this.props.watcherId + '/history';
+    let historyUrl = '/api/watchers/' + this.props.watcherId + '/activity';
     this.watcherRequest = request.get(historyUrl).end((err, response) => {
       let res = response.body;
       if (res.success) {
         this.setState({
-          values: res.result
+          activites: res.result.activites,
+          max: res.result.max
         });
       }
     });
@@ -30,10 +33,14 @@ class Heatmap extends React.Component {
   }
 
   classForValue(value) {
-    if (!value || value.count < 0) {
+    if (!value || value.total < 0) {
       return 'color-empty';
     }
-    return `color-scale-${value.count > 4 ? 4 : value.count}`;
+    let step = Math.floor(this.state.max / 4);
+    console.log('>>>>>>>>>', step);
+    let scale = Math.floor(value.total / step);
+    console.log(scale);
+    return `color-scale-${scale > 4 ? 4 : scale}`;
   }
 
   generateTitle(value) {
@@ -46,12 +53,12 @@ class Heatmap extends React.Component {
   render() {
     let now = moment();
     let numberOfDays = moment().isLeapYear() ? 366 : 365;
-    let values = this.state.values;
+    let activites = this.state.activites;
     return (
       <CalendarHeatmap
         endDate={now}
         numDays={numberOfDays}
-        values={values}
+        values={activites}
         classForValue={this.classForValue}
         onClick={this.props.filterDay}
       />

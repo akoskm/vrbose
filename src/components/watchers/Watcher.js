@@ -56,12 +56,12 @@ class WatcherComponent extends React.Component {
 
   updateWatcher(message) {
     if (message && this.state.watcher.matchers) {
-      // let wsMatchers = message.matchers;
       let matcher = this.state.watcher.matchers.find((curr, i) => {
         return message.name === curr.name;
       });
       if (matcher) {
         matcher.count = matcher.count + message.history.total;
+        if (!matcher.history) matcher.history = [];
         matcher.history.push(message.history);
         this.setState({
           watcher: this.state.watcher
@@ -113,6 +113,7 @@ class WatcherComponent extends React.Component {
               forDay={this.state.forDay}
               watcherId={watcher._id}
               matcherId={m._id}
+              history={m.history}
               index={i}
             />
           </Col>
