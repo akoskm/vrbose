@@ -21,7 +21,8 @@ class Heatmap extends React.Component {
       if (res.success) {
         this.setState({
           activites: res.result.activites,
-          max: res.result.max
+          max: res.result.max,
+          step: Math.floor(res.result.max / 4)
         });
       }
     });
@@ -36,10 +37,7 @@ class Heatmap extends React.Component {
     if (!value || value.total < 0) {
       return 'color-empty';
     }
-    let step = Math.floor(this.state.max / 4);
-    console.log('>>>>>>>>>', step);
-    let scale = Math.floor(value.total / step);
-    console.log(scale);
+    let scale = Math.floor(value.total / this.state.step);
     return `color-scale-${scale > 4 ? 4 : scale}`;
   }
 
