@@ -146,7 +146,7 @@ class EditWatcher extends React.Component {
           </Form>
         </Col>
         <Col lg={6} md={6} sm={6}>
-          <Summary matchers={watcher.matchers}/>
+          <Summary matchers={watcher.matchers} watcherId={watcher._id}/>
         </Col>
       </Row>
     );
