@@ -1,13 +1,30 @@
 import React from 'react';
 
 import Col from 'react-bootstrap/lib/Col';
-import Table from 'react-bootstrap/lib/Table';
 import Row from 'react-bootstrap/lib/Row';
+import Table from 'react-bootstrap/lib/Table';
 import Button from 'react-bootstrap/lib/Button';
+import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 
 class Summary extends React.Component {
   constructor(props) {
     super(props);
+
+    this.onNew = this.onNew.bind(this);
+    this.onEdit = this.onEdit.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+  }
+
+  onNew() {
+
+  }
+
+  onEdit() {
+
+  }
+
+  onDelete() {
+
   }
 
   render() {
@@ -20,7 +37,7 @@ class Summary extends React.Component {
             type='button'
             bsStyle='primary'
             className='pull-right btn-sm'
-            onClick={this.saveWatcher}
+            onClick={this.onNew}
           >
             New
           </Button>
@@ -31,15 +48,39 @@ class Summary extends React.Component {
               <th>Name</th>
               <th>Regex</th>
               <th>Count</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-          {this.props.matchers.map(function (m) {
+          {this.props.matchers.map((m) => {
             return (
               <tr>
                 <td>{m.name}</td>
                 <td>{m.regex}</td>
                 <td>{m.count}</td>
+                <td>
+                  <Button
+                    type='button'
+                    bsStyle='primary'
+                    className='btn-xs'
+                    onClick={this.onEdit}
+                    title='Edit'
+                  >
+                    <Glyphicon glyph='pencil'/>
+                  </Button>
+                </td>
+                <td>
+                  <Button
+                    type='button'
+                    bsStyle='danger'
+                    className='btn-xs'
+                    onClick={this.onEdit}
+                    title='Edit'
+                  >
+                    <Glyphicon glyph='remove'/>
+                  </Button>
+                </td>
               </tr>
             );
           })}
