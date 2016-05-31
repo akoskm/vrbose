@@ -3,69 +3,13 @@ html {
     background-color: #2D2D2D;
     color: #8F98A6;
     margin: 0px;
-  }
-}
 
-/*select2 input fix*/
-
-div.form-group > select[multiple] {
-  display: none;
-}
-
-div.thumbnail {
-  opacity: 1;
-  background-color: none;
-  -webkit-transition: opacity 300ms linear;
-  -moz-transition: opacity 300ms linear;
-  -o-transition: opacity 300ms linear;
-  -ms-transition: opacity 300ms linear;
-  transition: opacity 300ms linear;
-
-  &.selected {
-    opacity: 1;
-    -webkit-transition: opacity 300ms linear;
-    -moz-transition: opacity 300ms linear;
-    -o-transition: opacity 300ms linear;
-    -ms-transition: opacity 300ms linear;
-    transition: opacity 300ms linear;
-  }
-
-  &.nselected {
-    opacity: 0.3;
-    -webkit-transition: opacity 300ms linear;
-    -moz-transition: opacity 300ms linear;
-    -o-transition: opacity 300ms linear;
-    -ms-transition: opacity 300ms linear;
-    transition: opacity 300ms linear;
-  }
-}
-
-div.create-album-toolbar {
-
-  height: 49px;
-
-  p {
-    padding-top: 8px;
-  }
-
-  form.form-inline {
-    p {
-      display: inline-block;
-      padding-top: 6px;
-      margin-bottom: 0px;
+    input[disabled].input-editable {
+      background-color: transparent;
+      color: inherit;
+      font-size: inherit;
+      border: none;
+      box-shadow: none;
     }
-
-    div.form-group {
-      margin-bottom: 15px;
-    }
-  }
-
-  &.fixed-top {
-    position: fixed;
-    top: 10px;
-    z-index: 100;
-    padding-top: 8px;
-    background-color: #7400CA;
-    color: #c9c9c9;
   }
 }
