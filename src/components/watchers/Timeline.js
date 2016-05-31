@@ -37,11 +37,9 @@ const Timeline = (props) => {
   let history = props.history;
   if (history && history.length > 0) {
     let lastDate = moment(history[history.length - 1].createdOn);
+    lastDate.startOf('day');
     daysPast = startTime.diff(lastDate, 'days');
     if (daysPast > 0) {
-      if (startTime.isLeapYear()) {
-        daysPast = daysPast + 1;
-      }
       startTime.subtract(daysPast, 'days').endOf('day');
       resolution = resolution * 2;
     }
