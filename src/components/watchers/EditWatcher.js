@@ -9,6 +9,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import Button from 'react-bootstrap/lib/Button';
+import Summary from './Summary';
 
 class EditWatcher extends React.Component {
 
@@ -122,6 +123,19 @@ class EditWatcher extends React.Component {
               </Col>
             </FormGroup>
 
+            <FormGroup controlId='formControlsTextarea'>
+              <Col componentClass={ControlLabel} sm={2}>
+                Textarea
+              </Col>
+              <Col sm={10}>
+                <FormControl
+                  componentClass='textarea'
+                  placeholder='textarea'
+                  value={watcher.description}
+                />
+              </Col>
+            </FormGroup>
+
             <FormGroup className='pull-right'>
               <Col sm={12}>
                 <Button type='button' onClick={this.saveWatcher}>
@@ -130,6 +144,9 @@ class EditWatcher extends React.Component {
               </Col>
             </FormGroup>
           </Form>
+        </Col>
+        <Col lg={6} md={6} sm={6}>
+          <Summary matchers={watcher.matchers}/>
         </Col>
       </Row>
     );
