@@ -1,18 +1,15 @@
 import React from 'react';
-import Button from 'react-bootstrap/lib/Button';
-import Form from 'react-bootstrap/lib/Form';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Col from 'react-bootstrap/lib/Col';
-import Row from 'react-bootstrap/lib/Row';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
-import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import request from 'superagent';
 import io from 'socket.io-client';
-import Summary from './Summary';
+
 import Heatmap from './Heatmap';
 import Timeline from './Timeline';
+
+import Col from 'react-bootstrap/lib/Col';
+import Row from 'react-bootstrap/lib/Row';
+import Button from 'react-bootstrap/lib/Button';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 
 class WatcherComponent extends React.Component {
 
@@ -20,16 +17,13 @@ class WatcherComponent extends React.Component {
     super(props);
 
     this.state = {
-      watcher: {
-        name: 'New Watcher'
-      }
+      watcher: {}
     };
 
     this.filterDay = this.filterDay.bind(this);
     this.getWatcher = this.getWatcher.bind(this);
-    this.saveWatcher = this.saveWatcher.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.updateWatcher = this.updateWatcher.bind(this);
+    this.configureWatcher = this.configureWatcher.bind(this);
   }
 
   componentDidMount() {
@@ -78,35 +72,21 @@ class WatcherComponent extends React.Component {
     }
   }
 
-  saveWatcher() {
-    console.log(this.state);
-  }
-
-  handleChange(e) {
-    let target = e.target;
-    if (!e.target.attributes || !e.target.attributes.getNamedItem('data-prop')) {
-      throw 'data-prop isn\'t found on ' + target.outerHTML;
-    }
-    let key = target.attributes.getNamedItem('data-prop').value;
-    let newState = {};
-    newState[key] = target.value;
-    this.setState({
-      watcher: newState
-    });
-  }
-
   filterDay(value) {
     if (value) {
       this.getWatcher(value.date);
     }
   }
 
+  configureWatcher() {
+    let url = '/watchers/' + this.props.routeParams.id + '/edit';
+    this.props.history.pushState(null, url);
+  }
+
   render() {
     let watcher = this.state.watcher;
-    let buttonText = 'Create';
     let heatmap = (<p>Loading</p>);
     if (watcher._id) {
-      buttonText = 'Save';
       heatmap = (<Heatmap watcherId={watcher._id} filterDay={this.filterDay}/>);
     }
     let timelines = <p>No data.</p>;
@@ -126,67 +106,18 @@ class WatcherComponent extends React.Component {
     return (
       <div>
         <Row>
-          <Col xs={12} md={6} lg={6}>
-            <h4>{watcher.name}</h4>
-            <Form horizontal>
-              <FormGroup controlId='id'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  ID
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='AWSM-WTCHR-1'
-                    onChange={this.handleChange}
-                    data-prop='id'
-                    value={watcher.id}
-                  />
-                  <HelpBlock>Must be Unique</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup controlId='name'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Name
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='Awesome watcher'
-                    onChange={this.handleChange}
-                    data-prop='name'
-                    value={watcher.name}
-                  />
-                  <HelpBlock>Be more descriptive here</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup controlId='filename'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Filename
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='/var/log/vrbose.log'
-                    onChange={this.handleChange}
-                    data-prop='filename'
-                    value={watcher.filename}
-                  />
-                  <HelpBlock>File to watch</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup className='pull-right'>
-                <Col sm={12}>
-                  <Button type='button' onClick={this.saveWatcher}>
-                    {buttonText}
-                  </Button>
-                </Col>
-              </FormGroup>
-            </Form>
+          <Col sm={12}>
+            <h1>{this.state.watcher.name}
+              <Button
+                type='button'
+                bsStyle='primary'
+                className='pull-right'
+                onClick={this.configureWatcher}
+              >
+                <Glyphicon glyph='wrench'/> Configure
+              </Button>
+            </h1>
           </Col>
-          <Summary matchers={watcher.matchers}/>
         </Row>
         <Row>
           {timelines}
@@ -201,7 +132,8 @@ class WatcherComponent extends React.Component {
 
 WatcherComponent.propTypes = {
   params: React.PropTypes.object.isRequired,
-  routeParams: React.PropTypes.object.isRequired
+  routeParams: React.PropTypes.object.isRequired,
+  history: React.PropTypes.object.isRequired
 };
 
 export default WatcherComponent;

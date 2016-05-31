@@ -4,6 +4,7 @@ import ProfileComponent from './components/Profile';
 import SignInComponent from './components/Signin';
 import WatchersComponent from './components/watchers/Watchers';
 import WatcherComponent from './components/watchers/Watcher';
+import EditWatcherComponent from './components/watchers/EditWatcher';
 
 const routes = {
   path: '',
@@ -26,12 +27,16 @@ const routes = {
       component: WatchersComponent
     },
     {
+      path: '/watchers/new',
+      component: EditWatcherComponent
+    },
+    {
       path: '/watchers/:id',
       component: WatcherComponent
     },
     {
-      path: '/watchers/new',
-      component: WatcherComponent
+      path: '/watchers/:id/edit',
+      component: EditWatcherComponent
     }
   ]
 };

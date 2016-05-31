@@ -67,7 +67,7 @@ class WatchersComponent extends React.Component {
                 <td>{watcher.filename}</td>
                 <td>{watcher.description}</td>
                 <td>{watcher.total}</td>
-                <td><a onClick={this.openWatcher} data-id={watcher._id}>Edit</a></td>
+                <td><a onClick={this.openWatcher} data-id={watcher._id}>Open</a></td>
               </tr>
             );
           })}
