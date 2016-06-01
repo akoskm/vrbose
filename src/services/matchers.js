@@ -7,6 +7,57 @@ import mongoose from 'mongoose';
 
 const matcherApi = {
 
+  create(req, res, next) {
+    const workflow = workflowFactory(req, res);
+
+    workflow.on('validate', function () {
+      let matcher = req.body;
+      if (!matcher) {
+        workflow.outcome.errors.push('request is empty');
+        return workflow.emit('response');
+      } else {
+        if (!matcher.name) {
+          workflow.outcome.errors.push('Matcher name is required');
+        }
+
+        if (matcher.regex === null || matcher.regex === undefined || matcher.regex.length < 1) {
+          workflow.outcome.errors.push('Matcher regex is required');
+        }
+
+        if (workflow.hasErrors()) {
+          return workflow.emit('response');
+        }
+
+        workflow.matcher = matcher;
+        return workflow.emit('create');
+      }
+    });
+
+    workflow.on('create', function () {
+      let update = {
+        $push: {
+          matchers: {
+            name: workflow.matcher.name,
+            regex: workflow.matcher.regex
+          }
+        }
+      };
+      mongoose.model('Watcher').findByIdAndUpdate(
+        req.params.watcherId,
+        update,
+        function (err, doc) {
+          if (err) {
+            logger.instance.error('Error while creating matcher', err);
+            workflow.outcome.errors.push('Cannot create matcher');
+            return workflow.emit('response');
+          }
+
+          workflow.outcome.result = doc;
+          return workflow.emit('response');
+        });
+    });
+  },
+
   update(req, res, next) {
     const workflow = workflowFactory(req, res);
 
