@@ -11,75 +11,38 @@ import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 
-import MatcherRow from './MatcherRow';
-
-class Summary extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      editing: false
-    };
-
-    this.onNew = this.onNew.bind(this);
-    this.onEdit = this.onEdit.bind(this);
-    this.onDelete = this.onDelete.bind(this);
+const Summary = (props) => {
+  let matcherRows = <tr><td></td></tr>;
+  let matchersTable = <Col xs={12} md={12} lg={12}>No entries found</Col>;
+  if (props.matchers && props.matchers.length > 0) {
+    matchersTable = (
+      <Col xs={12} md={12} lg={12}>
+        <h4>Matchers</h4>
+        <Table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Regex</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.matchers.map((m) => {
+              return (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.regex}</td>
+                  <td>{m.count}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </Col>
+    );
   }
-
-  onNew() {
-
-  }
-
-  onEdit() {
-    this.setState({
-      editing: true
-    });
-  }
-
-  onDelete() {
-
-  }
-
-  render() {
-    let matcherRows = <tr><td></td></tr>;
-    let matchersTable = <Col xs={12} md={12} lg={12}>No entries found</Col>;
-    if (this.props.matchers && this.props.matchers.length > 0) {
-      matcherRows = this.props.matchers.map((m) => {
-        return <MatcherRow matcher={m} watcherId={this.props.watcherId}/>;
-      });
-      matchersTable = (
-        <Col xs={12} md={12} lg={12}>
-          <h4>Matcher
-            <Button
-              type='button'
-              bsStyle='primary'
-              className='pull-right btn-sm'
-              onClick={this.onNew}
-            >
-              New
-            </Button>
-          </h4>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Regex</th>
-                <th>Count</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            {matcherRows}
-            </tbody>
-          </Table>
-        </Col>
-      );
-    }
-    return matchersTable;
-  }
-}
+  return matchersTable;
+};
 
 Summary.propTypes = {
   matchers: React.PropTypes.object.isRequired,

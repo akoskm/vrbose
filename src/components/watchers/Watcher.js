@@ -2,8 +2,8 @@ import React from 'react';
 import request from 'superagent';
 import io from 'socket.io-client';
 
-import Heatmap from './Heatmap';
-import Timeline from './Timeline';
+import Heatmap from './graphs/Heatmap';
+import Timeline from './graphs/Timeline';
 
 import Col from 'react-bootstrap/lib/Col';
 import Row from 'react-bootstrap/lib/Row';
