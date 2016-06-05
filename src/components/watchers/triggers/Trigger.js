@@ -37,9 +37,9 @@ class Trigger extends React.Component {
       }).end((err, response) => {
         let res = response.body;
         if (res.success) {
+          this.props.trigger._id = res.result._id;
           this.setState({
-            editing: false,
-            trigger: res.result
+            editing: false
           });
         }
       });
@@ -48,13 +48,12 @@ class Trigger extends React.Component {
 
   onEdit() {
     this.setState({
-      editing: true,
-      trigger: this.props.trigger
+      editing: true
     });
   }
 
   onCancel() {
-    // was editing existing
+    // edited existing
     if (this.state.trigger._id) {
       this.setState({
         editing: false
@@ -75,8 +74,7 @@ class Trigger extends React.Component {
         let res = response.body;
         if (res.success) {
           this.setState({
-            editing: false,
-            trigger: null
+            editing: false
           });
         }
       });
@@ -89,7 +87,7 @@ class Trigger extends React.Component {
       throw 'data-prop isn\'t found on ' + target.outerHTML;
     }
     let key = target.attributes.getNamedItem('data-prop').value;
-    let newState = this.state.trigger;
+    let newState = this.props.trigger;
     newState[key] = target.value;
     this.setState({
       trigger: newState
@@ -107,10 +105,10 @@ class Trigger extends React.Component {
   }
 
   render() {
-    this.state.trigger = this.props.trigger;
+    // this.state.trigger = this.props.trigger;
     let editing = this.state.editing;
     let helpBlock = '';
-    let trigger = this.state.trigger;
+    let trigger = this.props.trigger;
     let cancelButton = '';
     let inputClass = classNames({
       'input-sm': true,
