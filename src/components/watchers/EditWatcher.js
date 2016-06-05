@@ -154,7 +154,7 @@ class EditWatcher extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <Triggers triggers={{}}/>
+            <Triggers triggers={watcher.triggers} watcherId={watcher._id}/>
           </Col>
         </Row>
       </div>

@@ -11,7 +11,7 @@ import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 
-import triggerRow from './triggerRow';
+import Trigger from './Trigger';
 
 class Triggers extends React.Component {
 
@@ -19,7 +19,8 @@ class Triggers extends React.Component {
     super(props);
 
     this.state = {
-      editing: false
+      editing: false,
+      triggers: []
     };
 
     this.onNew = this.onNew.bind(this);
@@ -27,8 +28,22 @@ class Triggers extends React.Component {
     this.onDelete = this.onDelete.bind(this);
   }
 
-  onNew() {
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      triggers: nextProps.triggers
+    });
+  }
 
+  onNew() {
+    this.state.triggers.unshift({
+      type: 'Email',
+      recipient: '',
+      count: 0,
+      lastTriggered: null
+    });
+    this.setState({
+      triggers: this.state.triggers
+    });
   }
 
   onEdit() {
@@ -37,16 +52,25 @@ class Triggers extends React.Component {
     });
   }
 
-  onDelete() {
-
+  onDelete(i) {
+    let newTriggers = this.state.triggers.splice(i, 1);
+    this.setState({
+      triggers: this.state.triggers
+    });
   }
 
   render() {
     let triggerRows = <tr><td colSpan='3'>Click here to create a new Trigger</td></tr>;
     let triggersTable;
-    if (this.props.triggers && this.props.triggers.length > 0) {
-      triggerRows = this.props.triggers.map((m) => {
-        return <triggerRow trigger={m} watcherId={this.props.watcherId}/>;
+    let triggers = this.state.triggers;
+    if (triggers && triggers.length > 0) {
+      triggerRows = triggers.map((trigger, i) => {
+        return (<Trigger
+          index={i}
+          trigger={trigger}
+          watcherId={this.props.watcherId}
+          onCancel={this.onDelete}
+        />);
       });
     }
     return (
@@ -65,8 +89,12 @@ class Triggers extends React.Component {
           <thead>
             <tr>
               <th>Type</th>
+              <th>Recipient</th>
               <th>Count</th>
               <th>Last triggered</th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
