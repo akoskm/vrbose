@@ -16,6 +16,11 @@ let watcherSchema = new mongoose.Schema({
     createdOn: { type: Date, required: true, default: Date.now },
     lastMatch: { type: Date }
   }],
+  triggers: [{
+    type: { type: String, required: true, default: 'email' },
+    recipient: { type: String, required: true },
+    count: { type: Number, required: true, default: 0 }
+  }],
   createdOn: { type: Date, required: true, default: Date.now },
   createdBy: { type: String, required: true, default: 'unknown' },
   editedOn: { type: Date },
