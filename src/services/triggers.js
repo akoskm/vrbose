@@ -49,10 +49,19 @@ const triggerApi = {
           if (err) {
             logger.instance.error('Error while creating trigger', err);
             workflow.outcome.errors.push('Cannot create trigger');
+          }
+
+          if (!doc.triggers || doc.triggers.length < 1) {
+            logger.instance.error('No triggers found');
+            workflow.outcome.errors.push('Cannot create trigger');
+          }
+
+          if (workflow.hasErrors()) {
             return workflow.emit('response');
           }
 
-          workflow.outcome.result = doc;
+          // as it should be;
+          workflow.outcome.result = doc.triggers[doc.triggers.length - 1];
           return workflow.emit('response');
         });
     });

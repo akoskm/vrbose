@@ -4,6 +4,7 @@ import signout from './services/signout';
 import { profileApi } from './services/profile';
 import { watcherApi } from './services/watchers';
 import { matcherApi } from './services/matchers';
+import { triggerApi } from './services/triggers';
 import { renderToString } from 'react-dom/server';
 import { routes } from './routes';
 import { match, RoutingContext } from 'react-router';
@@ -18,7 +19,12 @@ export default (app, upload) => {
   app.get('/api/watchers', watcherApi.list);
   app.get('/api/watchers/:id', watcherApi.find);
   app.get('/api/watchers/:id/activity', watcherApi.activity);
+
+  app.post('/api/watchers/:watcherId/matchers', matcherApi.create);
   app.put('/api/watchers/:watcherId/matchers/:id', matcherApi.update);
+
+  app.post('/api/watchers/:watcherId/triggers', triggerApi.create);
+  app.put('/api/watchers/:watcherId/triggers/:id', triggerApi.update);
 
   /* main router for reactjs components, supporting both client and server side rendering*/
   let sendHtml = function (res, props, context) {
