@@ -24,6 +24,7 @@ class Trigger extends React.Component {
     this.isValid = this.isValid.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onCreate = this.onCreate.bind(this);
+    this.onDelete = this.onDelete.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -62,6 +63,10 @@ class Trigger extends React.Component {
     } else {
       this.props.onCancel(this.props.index);
     }
+  }
+
+  onDelete() {
+    this.props.onCancel(this.props.index);
   }
 
   onSave() {
@@ -107,6 +112,7 @@ class Trigger extends React.Component {
 
   render() {
     // this.state.trigger = this.props.trigger;
+    let deleteButton = '';
     let editing = this.state.editing;
     let helpBlock = '';
     let trigger = this.state.trigger;
@@ -136,9 +142,19 @@ class Trigger extends React.Component {
         type='button'
         className='btn-xs'
         onClick={this.onCancel}
-        title='Edit'
+        title='Cancel'
       >
         <Glyphicon glyph='remove'/> Cancel
+      </Button>);
+    } else {
+      deleteButton = (<Button
+        bsStyle='danger'
+        type='button'
+        className='btn-xs'
+        onClick={this.onDelete}
+        title='Delete'
+      >
+        <Glyphicon glyph='remove'/> Delete
       </Button>);
     }
     if (this.state.validationState) {
@@ -182,6 +198,8 @@ class Trigger extends React.Component {
             <Glyphicon glyph={primaryIcon}/> {primaryTitle}
           </Button>
           {' '}
+          {deleteButton}
+          {' '}
           {cancelButton}
         </td>
       </tr>
@@ -194,6 +212,7 @@ Trigger.propTypes = {
   trigger: React.PropTypes.object.isRequired,
   editing: React.PropTypes.object.isRequired,
   onCancel: React.PropTypes.func.isRequired,
+  onDelete: React.PropTypes.func.isRequired,
   index: React.PropTypes.object.isRequired
 };
 

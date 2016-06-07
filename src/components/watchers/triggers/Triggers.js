@@ -1,5 +1,5 @@
 import React from 'react';
-
+import request from 'superagent';
 import classNames from 'classnames';
 
 import Col from 'react-bootstrap/lib/Col';
@@ -53,10 +53,20 @@ class Triggers extends React.Component {
   }
 
   onDelete(i) {
-    let newTriggers = this.state.triggers.splice(i, 1);
-    this.setState({
-      triggers: this.state.triggers
-    });
+    let removedTrigger = this.state.triggers.splice(i, 1);
+    if (removedTrigger && removedTrigger.length === 1) {
+      const url = '/api/watchers/' + this.props.watcherId + '/triggers/' + removedTrigger[0]._id;
+      request
+        .delete(url)
+        .end((err, response) => {
+          let res = response.body;
+          if (res.success) {
+            this.setState({
+              triggers: this.state.triggers
+            });
+          }
+        });
+    }
   }
 
   render() {
@@ -67,6 +77,7 @@ class Triggers extends React.Component {
       triggerRows = triggers.map((trigger, i) => {
         return (<Trigger
           index={i}
+          key={trigger._id}
           trigger={trigger}
           watcherId={this.props.watcherId}
           onCancel={this.onDelete}
