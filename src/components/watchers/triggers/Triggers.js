@@ -35,7 +35,7 @@ class Triggers extends React.Component {
   }
 
   onNew() {
-    this.state.triggers.unshift({
+    this.state.triggers.push({
       type: 'Email',
       recipient: '',
       count: 0,
@@ -92,8 +92,6 @@ class Triggers extends React.Component {
               <th>Recipient</th>
               <th>Count</th>
               <th>Last triggered</th>
-              <th></th>
-              <th></th>
               <th></th>
             </tr>
           </thead>

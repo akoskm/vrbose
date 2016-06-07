@@ -16,7 +16,7 @@ class Trigger extends React.Component {
 
     this.state = {
       editing: false,
-      trigger: null
+      trigger: props.trigger
     };
 
     this.onEdit = this.onEdit.bind(this);
@@ -48,15 +48,16 @@ class Trigger extends React.Component {
 
   onEdit() {
     this.setState({
-      editing: true
+      editing: true,
+      oldTrigger: Object.assign({}, this.props.trigger)
     });
   }
 
   onCancel() {
-    // edited existing
-    if (this.state.trigger._id) {
+    if (this.props.trigger._id) {
       this.setState({
-        editing: false
+        editing: false,
+        trigger: this.state.oldTrigger
       });
     } else {
       this.props.onCancel(this.props.index);
@@ -108,7 +109,7 @@ class Trigger extends React.Component {
     // this.state.trigger = this.props.trigger;
     let editing = this.state.editing;
     let helpBlock = '';
-    let trigger = this.props.trigger;
+    let trigger = this.state.trigger;
     let cancelButton = '';
     let inputClass = classNames({
       'input-sm': true,
