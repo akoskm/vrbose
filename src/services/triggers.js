@@ -60,7 +60,6 @@ const triggerApi = {
             return workflow.emit('response');
           }
 
-          // as it should be;
           workflow.outcome.result = doc.triggers[doc.triggers.length - 1];
           return workflow.emit('response');
         });
@@ -116,6 +115,48 @@ const triggerApi = {
         workflow.outcome.result = doc;
         return workflow.emit('response');
       });
+    });
+
+    workflow.emit('validate');
+  },
+
+  delete(req, res, next) {
+    const workflow = workflowFactory(req, res);
+
+    workflow.on('validate', function () {
+      if (!req.params.watcherId) {
+        workflow.outcome.errors.push('Watcher ID is required');
+      }
+
+      if (!req.params.id) {
+        workflow.outcome.errors.push('Trigger ID is required');
+      }
+
+      if (workflow.hasErrors()) {
+        return workflow.emit('response');
+      }
+      return workflow.emit('delete');
+    });
+
+    workflow.on('delete', function () {
+      let update = {
+        $pull: {
+          triggers: {
+            _id: req.params.id
+          }
+        }
+      };
+      mongoose.model('Watcher').findByIdAndUpdate(
+        req.params.watcherId,
+        update,
+        function (err, doc) {
+          if (err) {
+            logger.instance.error('Error while deleting trigger', err);
+            workflow.outcome.errors.push('Cannot delete trigger');
+          }
+
+          return workflow.emit('response');
+        });
     });
 
     workflow.emit('validate');

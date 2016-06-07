@@ -25,6 +25,7 @@ export default (app, upload) => {
 
   app.post('/api/watchers/:watcherId/triggers', triggerApi.create);
   app.put('/api/watchers/:watcherId/triggers/:id', triggerApi.update);
+  app.delete('/api/watchers/:watcherId/triggers/:id', triggerApi.delete);
 
   /* main router for reactjs components, supporting both client and server side rendering*/
   let sendHtml = function (res, props, context) {
