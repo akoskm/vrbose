@@ -17,6 +17,7 @@ export default (app, upload) => {
   app.get('/api/profile', profileApi.profile);
 
   app.get('/api/watchers', watcherApi.list);
+  app.post('/api/watchers/', watcherApi.create);
   app.get('/api/watchers/:id', watcherApi.find);
   app.get('/api/watchers/:id/activity', watcherApi.activity);
 

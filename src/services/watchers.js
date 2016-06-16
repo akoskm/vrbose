@@ -109,6 +109,37 @@ const watcherApi = {
     });
 
     workflow.emit('findActivities');
+  },
+
+  create(req, res, next) {
+    const workflow = workflowFactory(req, res);
+    const watcher = req.body;
+
+    workflow.on('validate', function () {
+      if (!watcher.filename) {
+        workflow.outcome.errors.push('Filename is required');
+      }
+
+      if (workflow.hasErrors()) {
+        workflow.emit('response');
+      } else {
+        workflow.emit('create');
+      }
+    });
+
+    workflow.on('create', function () {
+      mongoose.model('Watcher').create(watcher, function (err, doc) {
+        if (err)  {
+          logger.instance.error('Error while creating watcher', err);
+          workflow.outcome.errors.push('Cannot create watcher');
+          return workflow.emit('response');
+        }
+        workflow.outcome.watcher = doc;
+        workflow.emit('response');
+      });
+    });
+
+    workflow.emit('validate');
   }
 };
 
