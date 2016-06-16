@@ -10,7 +10,7 @@ let watcherSchema = new mongoose.Schema({
   total: { type: Number, required: true, default: 0 },
   endPos: { type: Number, required: true, default: 0 },
   matchers: [{
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
     regex: { type: String, required: true },
     count: { type: Number, required: true, default: 0 },
     createdOn: { type: Date, required: true, default: Date.now },
