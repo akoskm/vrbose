@@ -8,7 +8,6 @@ config.mongodb = {
   // vrbose db, user and a messages collection has to be created
   // use vrbose
   // db.createUser({"user": "vrbose", "pwd": "vrbose", "roles": [{role: "readWrite", db: "vrbose"}]});
-  // db.createCollection("messages");
   uri: process.env.MONGO_URI || 'mongodb://vrbose:vrbose@localhost/vrbose'
 };
 config.cryptoKey = 'milutth3c4t';
