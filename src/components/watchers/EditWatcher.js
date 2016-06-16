@@ -50,7 +50,14 @@ class EditWatcher extends React.Component {
   }
 
   saveWatcher() {
-    console.log(this.state);
+    const trigger = this.state.watcher;
+    const url = '/api/watchers/';
+    request.post(url).send(trigger).end((err, response) => {
+      let res = response.body;
+      if (res.success && res.watcher) {
+        this.props.history.pushState(null, '/watchers/' + res.watcher._id);
+      }
+    });
   }
 
   handleChange(e) {
@@ -59,7 +66,7 @@ class EditWatcher extends React.Component {
       throw 'data-prop isn\'t found on ' + target.outerHTML;
     }
     let key = target.attributes.getNamedItem('data-prop').value;
-    let newState = {};
+    let newState = this.state.watcher;
     newState[key] = target.value;
     this.setState({
       watcher: newState
@@ -69,8 +76,12 @@ class EditWatcher extends React.Component {
   render() {
     let watcher = this.state.watcher;
     let buttonText = 'Create';
+    let summary = '';
+    let triggers = '';
     if (watcher._id) {
       buttonText = 'Save';
+      summary = (<Summary matchers={watcher.matchers} watcherId={watcher._id}/>);
+      triggers = (<Triggers triggers={watcher.triggers} watcherId={watcher._id}/>);
     }
     return (
       <div>
@@ -149,12 +160,12 @@ class EditWatcher extends React.Component {
             </Form>
           </Col>
           <Col lg={6} md={6} sm={6}>
-            <Summary matchers={watcher.matchers} watcherId={watcher._id}/>
+            {summary}
           </Col>
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <Triggers triggers={watcher.triggers} watcherId={watcher._id}/>
+            {triggers}
           </Col>
         </Row>
       </div>
@@ -163,7 +174,8 @@ class EditWatcher extends React.Component {
 }
 
 EditWatcher.propTypes = {
-  routeParams: React.PropTypes.object.isRequired
+  routeParams: React.PropTypes.object.isRequired,
+  history: React.PropTypes.object.isRequired
 };
 
 export default EditWatcher;
