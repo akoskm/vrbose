@@ -80,10 +80,13 @@ class EditWatcher extends React.Component {
     let buttonText = 'Create';
     let summary = '';
     let triggers = '';
+    let title = watcher.id;
     if (watcher._id) {
       buttonText = 'Save';
       summary = (<Summary matchers={watcher.matchers} watcherId={watcher._id}/>);
       triggers = (<Triggers triggers={watcher.triggers} watcherId={watcher._id}/>);
+    } else {
+      title = 'New Watcher';
     }
     let formElements = [{
       id: 'id',
@@ -109,7 +112,7 @@ class EditWatcher extends React.Component {
       <div>
         <Row>
           <Col xs={12} md={6} lg={6}>
-            <h4>{watcher.id}</h4>
+            <h4>{title}</h4>
             <Form horizontal>
               {form}
               <FormGroup className='pull-right'>
