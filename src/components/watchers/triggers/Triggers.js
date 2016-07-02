@@ -9,7 +9,6 @@ import Table from 'react-bootstrap/lib/Table';
 import Button from 'react-bootstrap/lib/Button';
 import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import FormControl from 'react-bootstrap/lib/FormControl';
 
 import Trigger from './Trigger';
 
@@ -72,7 +71,7 @@ class Triggers extends React.Component {
   render() {
     let triggerRows = <tr><td colSpan='3'>Click here to create a new Trigger</td></tr>;
     let triggersTable;
-    let triggers = this.state.triggers;
+    let triggers = this.props.triggers;
     if (triggers && triggers.length > 0) {
       triggerRows = triggers.map((trigger, i) => {
         return (<Trigger

@@ -4,14 +4,11 @@ import Form from 'react-bootstrap/lib/Form';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import Row from 'react-bootstrap/lib/Row';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
-import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import Button from 'react-bootstrap/lib/Button';
 
-import Triggers from './triggers/Triggers';
 import Summary from './Summary';
+import Triggers from './triggers/Triggers';
+import InputComponent from '../InputComponent';
 
 class EditWatcher extends React.Component {
 
@@ -24,8 +21,8 @@ class EditWatcher extends React.Component {
       }
     };
 
+    this.updateProperty = this.updateProperty.bind(this);
     this.saveWatcher = this.saveWatcher.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -50,24 +47,29 @@ class EditWatcher extends React.Component {
   }
 
   saveWatcher() {
-    const trigger = this.state.watcher;
-    const url = '/api/watchers/';
-    request.post(url).send(trigger).end((err, response) => {
-      let res = response.body;
-      if (res.success && res.watcher) {
-        this.props.history.pushState(null, '/watchers/' + res.watcher._id);
-      }
-    });
+    const watcher = this.state.watcher;
+    let url = '/api/watchers/';
+    if (watcher._id) {
+      url = url + watcher._id;
+      request.put(url).send(watcher).end((err, response) => {
+        let res = response.body;
+        if (!res.success) {
+          alert(response.body);
+        }
+      });
+    } else {
+      request.post(url).send(watcher).end((err, response) => {
+        let res = response.body;
+        if (res.success && res.watcher) {
+          this.props.history.pushState(null, '/watchers/' + res.watcher._id);
+        }
+      });
+    }
   }
 
-  handleChange(e) {
-    let target = e.target;
-    if (!e.target.attributes || !e.target.attributes.getNamedItem('data-prop')) {
-      throw 'data-prop isn\'t found on ' + target.outerHTML;
-    }
-    let key = target.attributes.getNamedItem('data-prop').value;
+  updateProperty(key, value) {
     let newState = this.state.watcher;
-    newState[key] = target.value;
+    newState[key] = value;
     this.setState({
       watcher: newState
     });
@@ -83,73 +85,33 @@ class EditWatcher extends React.Component {
       summary = (<Summary matchers={watcher.matchers} watcherId={watcher._id}/>);
       triggers = (<Triggers triggers={watcher.triggers} watcherId={watcher._id}/>);
     }
+    let formElements = [{
+      id: 'id',
+      name: 'ID'
+    }, {
+      id: 'name',
+      name: 'Name'
+    }, {
+      id: 'filename',
+      name: 'Filename'
+    }];
+    let form = (formElements.map((fe) => {
+      return (
+        <InputComponent
+          name={fe.id}
+          label={fe.name}
+          value={watcher[fe.id]}
+          onChange={this.updateProperty}
+        />
+      );
+    }));
     return (
       <div>
         <Row>
           <Col xs={12} md={6} lg={6}>
-            <h4>{watcher.name}</h4>
+            <h4>{watcher.id}</h4>
             <Form horizontal>
-              <FormGroup controlId='id'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  ID
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='AWSM-WTCHR-1'
-                    onChange={this.handleChange}
-                    data-prop='id'
-                    value={watcher.id}
-                  />
-                  <HelpBlock>Must be Unique</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup controlId='name'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Name
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='Awesome watcher'
-                    onChange={this.handleChange}
-                    data-prop='name'
-                    value={watcher.name}
-                  />
-                  <HelpBlock>Be more descriptive here</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup controlId='filename'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Filename
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    type='text'
-                    placeholder='/var/log/vrbose.log'
-                    onChange={this.handleChange}
-                    data-prop='filename'
-                    value={watcher.filename}
-                  />
-                  <HelpBlock>File to watch</HelpBlock>
-                </Col>
-              </FormGroup>
-
-              <FormGroup controlId='formControlsTextarea'>
-                <Col componentClass={ControlLabel} sm={2}>
-                  Textarea
-                </Col>
-                <Col sm={10}>
-                  <FormControl
-                    componentClass='textarea'
-                    placeholder='textarea'
-                    value={watcher.description}
-                  />
-                </Col>
-              </FormGroup>
-
+              {form}
               <FormGroup className='pull-right'>
                 <Col sm={12}>
                   <Button type='button' onClick={this.saveWatcher}>
