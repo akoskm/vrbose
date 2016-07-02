@@ -140,6 +140,37 @@ const watcherApi = {
     });
 
     workflow.emit('validate');
+  },
+
+  update(req, res, next) {
+    const workflow = workflowFactory(req, res);
+    const watcher = req.body;
+
+    workflow.on('validate', function () {
+      if (!watcher.filename) {
+        workflow.outcome.errors.push('Filename is required');
+      }
+
+      if (workflow.hasErrors()) {
+        workflow.emit('response');
+      } else {
+        workflow.emit('update');
+      }
+    });
+
+    workflow.on('update', function () {
+      mongoose.model('Watcher').findByIdAndUpdate(watcher._id, watcher, function (err, doc) {
+        if (err)  {
+          logger.instance.error('Error while updating watcher', err);
+          workflow.outcome.errors.push('Cannot update watcher');
+          return workflow.emit('response');
+        }
+        workflow.outcome.watcher = doc;
+        workflow.emit('response');
+      });
+    });
+
+    workflow.emit('validate');
   }
 };
 
