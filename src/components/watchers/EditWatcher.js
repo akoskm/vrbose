@@ -23,6 +23,8 @@ class EditWatcher extends React.Component {
 
     this.updateProperty = this.updateProperty.bind(this);
     this.saveWatcher = this.saveWatcher.bind(this);
+    this.addTrigger = this.addTrigger.bind(this);
+    this.removeTrigger = this.removeTrigger.bind(this);
   }
 
   componentDidMount() {
@@ -67,6 +69,35 @@ class EditWatcher extends React.Component {
     }
   }
 
+  addTrigger(trigger) {
+    let newState = this.state.watcher;
+    newState.triggers.push(trigger);
+    this.setState({
+      watcher: newState
+    });
+  }
+
+  removeTrigger(i) {
+    let newState = this.state.watcher;
+    let removedTrigger = newState.triggers.splice(i, 1);
+    if (removedTrigger && removedTrigger.length === 1) {
+      const url = '/api/watchers/' + this.props.watcherId + '/triggers/' + removedTrigger[0]._id;
+      request
+        .delete(url)
+        .end((err, response) => {
+          let res = response.body;
+          if (res.success) {
+            this.setState({
+              triggers: this.state.triggers
+            });
+          }
+        });
+    }
+    this.setState({
+      watcher: newState
+    });
+  }
+
   updateProperty(key, value) {
     let newState = this.state.watcher;
     newState[key] = value;
@@ -84,7 +115,7 @@ class EditWatcher extends React.Component {
     if (watcher._id) {
       buttonText = 'Save';
       summary = (<Summary matchers={watcher.matchers} watcherId={watcher._id}/>);
-      triggers = (<Triggers triggers={watcher.triggers} watcherId={watcher._id}/>);
+      triggers = (<Triggers triggers={watcher.triggers} addTrigger={this.addTrigger} removeTrigger={this.removeTrigger} watcherId={watcher._id}/>);
     } else {
       title = 'New Watcher';
     }

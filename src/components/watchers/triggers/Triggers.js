@@ -34,14 +34,11 @@ class Triggers extends React.Component {
   }
 
   onNew() {
-    this.state.triggers.push({
+    this.props.addTrigger({
       type: 'Email',
       recipient: '',
       count: 0,
       lastTriggered: null
-    });
-    this.setState({
-      triggers: this.state.triggers
     });
   }
 
@@ -52,24 +49,11 @@ class Triggers extends React.Component {
   }
 
   onDelete(i) {
-    let removedTrigger = this.state.triggers.splice(i, 1);
-    if (removedTrigger && removedTrigger.length === 1) {
-      const url = '/api/watchers/' + this.props.watcherId + '/triggers/' + removedTrigger[0]._id;
-      request
-        .delete(url)
-        .end((err, response) => {
-          let res = response.body;
-          if (res.success) {
-            this.setState({
-              triggers: this.state.triggers
-            });
-          }
-        });
-    }
+    this.props.removeTrigger(i);
   }
 
   render() {
-    let triggerRows = <tr><td colSpan='3'>Click here to create a new Trigger</td></tr>;
+    let triggerRows = <tr><td colSpan='3'>Click to create a new Trigger</td></tr>;
     let triggersTable;
     let triggers = this.props.triggers;
     if (triggers && triggers.length > 0) {
@@ -116,7 +100,9 @@ class Triggers extends React.Component {
 
 Triggers.propTypes = {
   triggers: React.PropTypes.object.isRequired,
-  watcherId: React.PropTypes.object.isRequired
+  watcherId: React.PropTypes.object.isRequired,
+  addTrigger: React.PropTypes.func.isRequired,
+  removeTrigger: React.PropTypes.func.isRequired
 };
 
 export default Triggers;
